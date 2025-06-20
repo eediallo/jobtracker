@@ -68,7 +68,7 @@ export default function AddJobPage() {
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.position ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.position ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.position}
@@ -92,7 +92,7 @@ export default function AddJobPage() {
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.company ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.company ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.company}
@@ -116,7 +116,7 @@ export default function AddJobPage() {
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.city}
@@ -141,7 +141,7 @@ export default function AddJobPage() {
             type="date"
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg appearance-none ${error && !form.application_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg appearance-none ${error && !form.application_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             data-has-value={!!form.application_date}
           />
@@ -166,7 +166,7 @@ export default function AddJobPage() {
             value={form.status}
             onChange={handleChange}
             disabled={loading}
-            className="block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 pr-10 h-12"
+            className="block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 pr-10 h-16"
             data-has-value={!!form.status}
           >
             {statusOptions.map(opt => <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>)}
@@ -188,7 +188,7 @@ export default function AddJobPage() {
             required
             disabled={loading}
             type="url"
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.job_link ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg focus:outline-none transition-all focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.job_link ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.job_link}
