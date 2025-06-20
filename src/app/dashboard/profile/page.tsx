@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-provider';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -25,6 +25,22 @@ export default function ProfilePage() {
   const [privacy, setPrivacy] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  const [cv, setCv] = useState<{ name: string, url: string } | null>(null);
+  const [coverLetter, setCoverLetter] = useState<{ name: string, url: string } | null>(null);
+  const [uploading, setUploading] = useState<'cv' | 'cl' | null>(null);
+  const cvInputRef = useRef<HTMLInputElement>(null);
+  const clInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (user && user.user_metadata) {
+      if (user.user_metadata.cv_url) {
+        setCv({ name: user.user_metadata.cv_name || 'Curriculum Vitae', url: user.user_metadata.cv_url });
+      }
+      if (user.user_metadata.cl_url) {
+        setCoverLetter({ name: user.user_metadata.cl_name || 'Cover Letter', url: user.user_metadata.cl_url });
+      }
+    }
+  }, [user]);
 
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault();
@@ -72,6 +88,81 @@ export default function ProfilePage() {
     // Implement actual delete logic here
   }
 
+  async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>, type: 'cv' | 'cl') {
+    if (!user || !event.target.files?.length) return;
+    const file = event.target.files[0];
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}-${type}.${fileExt}`;
+    const filePath = `${user.id}/${fileName}`;
+
+    setUploading(type);
+
+    const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: true,
+    });
+
+    if (uploadError) {
+      toast.error(`Failed to upload ${type === 'cv' ? 'CV' : 'Cover Letter'}`);
+      setUploading(null);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(filePath);
+
+    const { error: updateUserError } = await supabase.auth.updateUser({
+      data: {
+        [`${type}_url`]: publicUrl,
+        [`${type}_name`]: file.name,
+      }
+    });
+
+    setUploading(null);
+
+    if (updateUserError) {
+      toast.error('Failed to update profile.');
+    } else {
+      if (type === 'cv') {
+        setCv({ name: file.name, url: publicUrl });
+      } else {
+        setCoverLetter({ name: file.name, url: publicUrl });
+      }
+      toast.success(`${type === 'cv' ? 'CV' : 'Cover Letter'} uploaded successfully!`);
+    }
+  }
+
+  async function handleFileRemove(type: 'cv' | 'cl') {
+    if (!user) return;
+
+    const key_url = `${type}_url`;
+    const key_name = `${type}_name`;
+    const fileUrl = user.user_metadata[key_url];
+    if (!fileUrl) return;
+
+    const fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+    const { error: removeError } = await supabase.storage.from('documents').remove([`${user.id}/${fileName}`]);
+
+    if (removeError) {
+      toast.error(`Failed to remove ${type === 'cv' ? 'CV' : 'Cover Letter'}`);
+      return;
+    }
+
+    const { error: updateUserError } = await supabase.auth.updateUser({
+      data: {
+        [key_url]: null,
+        [key_name]: null,
+      }
+    });
+
+    if (updateUserError) {
+      toast.error('Failed to update profile.');
+    } else {
+      if (type === 'cv') setCv(null);
+      else setCoverLetter(null);
+      toast.success(`${type === 'cv' ? 'CV' : 'Cover Letter'} removed.`);
+    }
+  }
+
   if (!user) return <div>Please log in.</div>;
 
   return (
@@ -117,6 +208,54 @@ export default function ProfilePage() {
         </div>
         {/* Right: Editable Fields & Settings */}
         <div className="flex-1 flex flex-col gap-10">
+          {/* Documents Section */}
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+            <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100">My Documents</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* CV */}
+              <div className="flex flex-col gap-2">
+                <h3 className="font-semibold text-gray-700 dark:text-gray-300">Curriculum Vitae (CV)</h3>
+                {cv ? (
+                  <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <a href={cv.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline truncate">
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                      <span className="truncate">{cv.name}</span>
+                    </a>
+                    <button onClick={() => handleFileRemove('cv')} className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50" title="Remove CV">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500 dark:text-gray-400 p-2 bg-white dark:bg-gray-700 rounded-lg border border-dashed">No CV uploaded.</div>
+                )}
+                <button onClick={() => cvInputRef.current?.click()} className="btn btn-secondary btn-sm mt-1 w-full" disabled={uploading === 'cv' || !edit}>
+                  {uploading === 'cv' ? 'Uploading...' : cv ? 'Replace CV' : 'Upload CV'}
+                </button>
+                <input type="file" ref={cvInputRef} onChange={(e) => handleFileUpload(e, 'cv')} className="hidden" accept=".pdf,.doc,.docx" disabled={!edit}/>
+              </div>
+              {/* Cover Letter */}
+              <div className="flex flex-col gap-2">
+                <h3 className="font-semibold text-gray-700 dark:text-gray-300">Cover Letter</h3>
+                {coverLetter ? (
+                  <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <a href={coverLetter.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline truncate">
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                      <span className="truncate">{coverLetter.name}</span>
+                    </a>
+                    <button onClick={() => handleFileRemove('cl')} className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50" title="Remove Cover Letter">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500 dark:text-gray-400 p-2 bg-white dark:bg-gray-700 rounded-lg border border-dashed">No Cover Letter uploaded.</div>
+                )}
+                <button onClick={() => clInputRef.current?.click()} className="btn btn-secondary btn-sm mt-1 w-full" disabled={uploading === 'cl' || !edit}>
+                  {uploading === 'cl' ? 'Uploading...' : coverLetter ? 'Replace Letter' : 'Upload Letter'}
+                </button>
+                <input type="file" ref={clInputRef} onChange={(e) => handleFileUpload(e, 'cl')} className="hidden" accept=".pdf,.doc,.docx" disabled={!edit}/>
+              </div>
+            </div>
+          </div>
           {/* Editable Fields */}
           <form
             onSubmit={handlePasswordChange}
