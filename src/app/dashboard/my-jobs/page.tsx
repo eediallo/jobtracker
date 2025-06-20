@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-provider';
 import type { Job } from '@/lib/types';
-import Link from 'next/link';
 import { toast } from 'sonner';
+import { JobTable } from '@/components/JobTable';
+import { JobCard } from '@/components/JobCard';
+import { EmptyState } from '@/components/EmptyState';
+import { Skeleton } from '@/components/Skeleton';
 
 export default function MyJobsPage() {
   const { user } = useAuth();
@@ -12,6 +15,7 @@ export default function MyJobsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -28,15 +32,24 @@ export default function MyJobsPage() {
   }, [user]);
 
   function handleDelete(id: number) {
-    if (!confirm('Delete this job?')) return;
-    supabase.from('jobs').delete().eq('id', id).then(({ error }) => {
+    setConfirmDelete(id);
+  }
+
+  function confirmDeleteJob() {
+    if (!confirmDelete) return;
+    supabase.from('jobs').delete().eq('id', confirmDelete).then(({ error }) => {
       if (error) {
         toast.error('Failed to delete job');
       } else {
-        setJobs(jobs => jobs.filter(j => j.id !== id));
+        setJobs(jobs => jobs.filter(j => j.id !== confirmDelete));
         toast.success('Job deleted');
       }
+      setConfirmDelete(null);
     });
+  }
+
+  function handleEdit(id: number) {
+    window.location.href = `/dashboard/my-jobs/edit/${id}`;
   }
 
   function filterJobs(jobs: Job[]) {
@@ -77,82 +90,65 @@ export default function MyJobsPage() {
             <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
           ))}
         </select>
+        {(search || status) && (
+          <button
+            className="btn btn-secondary"
+            onClick={() => { setSearch(''); setStatus(''); }}
+            aria-label="Clear search and filters"
+          >
+            Clear
+          </button>
+        )}
       </div>
       {/* Table view for desktop */}
       <div className="hidden md:block">
-        <table className="w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2">Position</th>
-              <th className="p-2">Company</th>
-              <th className="p-2">City</th>
-              <th className="p-2">Date</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="border-t animate-pulse">
-                    <td className="p-2"><div className="h-4 bg-gray-200 rounded w-24" /></td>
-                    <td className="p-2"><div className="h-4 bg-gray-200 rounded w-20" /></td>
-                    <td className="p-2"><div className="h-4 bg-gray-200 rounded w-16" /></td>
-                    <td className="p-2"><div className="h-4 bg-gray-200 rounded w-20" /></td>
-                    <td className="p-2"><div className="h-4 bg-gray-200 rounded w-16" /></td>
-                    <td className="p-2"><div className="h-8 bg-gray-200 rounded w-20" /></td>
-                  </tr>
-                ))
-              : filteredJobs.map(job => (
-                  <tr key={job.id} className="border-t">
-                    <td className="p-2">{job.position}</td>
-                    <td className="p-2">{job.company}</td>
-                    <td className="p-2">{job.city}</td>
-                    <td className="p-2">{job.application_date}</td>
-                    <td className="p-2">{job.status}</td>
-                    <td className="p-2 flex gap-2">
-                      <Link href={`/dashboard/my-jobs/edit/${job.id}`} className="btn btn-xs btn-secondary">Edit</Link>
-                      <button className="btn btn-xs btn-danger" onClick={() => handleDelete(job.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-          </tbody>
-        </table>
-        {!loading && filteredJobs.length === 0 && (
-          <div className="text-center text-gray-500 py-8">No jobs found.</div>
+        {loading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </div>
+        ) : filteredJobs.length > 0 ? (
+          <JobTable jobs={filteredJobs} onEdit={handleEdit} onDelete={handleDelete} />
+        ) : (
+          <EmptyState
+            message="No jobs found. Start tracking your applications!"
+            ctaLabel="Add your first job"
+            onCta={() => window.location.href = '/dashboard/add-job'}
+          />
         )}
       </div>
       {/* Card view for mobile */}
       <div className="md:hidden flex flex-col gap-4">
-        {loading
-          ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded border p-4 shadow-sm animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-32 mb-2" />
-                <div className="h-4 bg-gray-200 rounded w-24 mb-1" />
-                <div className="h-3 bg-gray-200 rounded w-20 mb-2" />
-                <div className="h-4 bg-gray-200 rounded w-16 mb-2" />
-                <div className="flex gap-2 mt-2">
-                  <div className="h-8 bg-gray-200 rounded w-16" />
-                  <div className="h-8 bg-gray-200 rounded w-16" />
-                </div>
-              </div>
-            ))
-          : filteredJobs.map(job => (
-              <div key={job.id} className="rounded border p-4 shadow-sm">
-                <div className="font-bold">{job.position}</div>
-                <div className="text-sm text-gray-500">{job.company} - {job.city}</div>
-                <div className="text-xs text-gray-400">{job.application_date}</div>
-                <div className="mt-2">Status: <span className="font-semibold">{job.status}</span></div>
-                <div className="flex gap-2 mt-2">
-                  <Link href={`/dashboard/my-jobs/edit/${job.id}`} className="btn btn-xs btn-secondary">Edit</Link>
-                  <button className="btn btn-xs btn-danger" onClick={() => handleDelete(job.id)}>Delete</button>
-                </div>
-              </div>
-            ))}
-        {!loading && filteredJobs.length === 0 && (
-          <div className="text-center text-gray-500 py-8">No jobs found.</div>
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 w-full" />
+          ))
+        ) : filteredJobs.length > 0 ? (
+          filteredJobs.map(job => (
+            <JobCard key={job.id} job={job} onEdit={handleEdit} onDelete={handleDelete} />
+          ))
+        ) : (
+          <EmptyState
+            message="No jobs found. Start tracking your applications!"
+            ctaLabel="Add your first job"
+            onCta={() => window.location.href = '/dashboard/add-job'}
+          />
         )}
       </div>
+      {/* Confirmation dialog for delete */}
+      {confirmDelete !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+            <div className="font-semibold mb-2">Delete this job?</div>
+            <div className="text-gray-600 mb-4">This action cannot be undone.</div>
+            <div className="flex gap-2 justify-end">
+              <button className="btn btn-secondary" onClick={() => setConfirmDelete(null)}>Cancel</button>
+              <button className="btn btn-danger" onClick={confirmDeleteJob}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
