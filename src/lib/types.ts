@@ -1,13 +1,3 @@
-import { Session, User } from '@supabase/supabase-js';
-
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
-
 export interface Job {
   id: number;
   user_id: string;
