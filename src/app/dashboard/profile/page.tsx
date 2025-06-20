@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { useAuth } from '@/lib/auth-provider';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 function getInitials(email?: string | null) {
   if (!email) return '?';
@@ -12,6 +13,7 @@ function getInitials(email?: string | null) {
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -43,7 +45,7 @@ export default function ProfilePage() {
   async function handleSignOut() {
     await supabase.auth.signOut();
     toast.success('Signed out');
-    window.location.href = '/';
+    router.push('/');
   }
 
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
