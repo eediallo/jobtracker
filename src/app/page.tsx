@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-provider';
+import Image from 'next/image';
 
 const features = [
   {
@@ -44,12 +45,12 @@ const testimonials = [
   {
     name: 'Alex J.',
     text: 'JobTracker made my job search so much less stressful. I landed my dream job in 2 months!',
-    avatar: '/public/vercel.svg',
+    avatar: '/vercel.svg',
   },
   {
     name: 'Samira K.',
     text: 'The analytics and reminders kept me on track. Highly recommend for any job seeker!',
-    avatar: '/public/globe.svg',
+    avatar: '/globe.svg',
   },
 ];
 
@@ -87,7 +88,7 @@ export default function Page() {
 
       {/* Features Section */}
       <section className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-        {features.map((f, i) => (
+        {features.map((f) => (
           <div key={f.title} className="group bg-white/60 dark:bg-gray-900/60 rounded-xl p-6 shadow-lg backdrop-blur-md border border-white/20 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-all duration-200">
             <div className="flex-shrink-0 group-hover:rotate-6 transition-transform duration-200">
               {f.icon}
@@ -106,7 +107,7 @@ export default function Page() {
           Why JobTracker?
         </h2>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {benefits.map((b, i) => (
+          {benefits.map((b) => (
             <li key={b} className="flex items-center gap-3 bg-white/60 dark:bg-gray-900/60 rounded-lg p-4 shadow backdrop-blur border border-white/20 hover:scale-105 transition-transform duration-200">
               <span className="inline-block w-3 h-3 rounded-full bg-gradient-to-r from-blue-600 via-fuchsia-500 to-emerald-500 mr-2 animate-pulse" />
               <span className="text-gray-900 dark:text-white font-medium">{b}</span>
@@ -121,10 +122,10 @@ export default function Page() {
           What Our Users Say
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {testimonials.map((t, i) => (
+          {testimonials.map((t) => (
             <div key={t.name} className="bg-white/70 dark:bg-gray-900/70 rounded-xl p-6 shadow-lg border border-white/20 flex flex-col items-center text-center hover:scale-105 transition-transform duration-200">
-              <img src={t.avatar} alt={t.name} className="w-14 h-14 rounded-full mb-3 border-2 border-fuchsia-400 shadow" />
-              <p className="text-gray-800 dark:text-gray-200 italic mb-2">"{t.text}"</p>
+              <Image src={t.avatar} alt={t.name} width={56} height={56} className="w-14 h-14 rounded-full mb-3 border-2 border-fuchsia-400 shadow" />
+              <p className="text-gray-800 dark:text-gray-200 italic mb-2">&quot;{t.text}&quot;</p>
               <span className="font-bold text-gray-900 dark:text-white">{t.name}</span>
             </div>
           ))}
