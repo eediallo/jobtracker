@@ -30,7 +30,6 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState<'cv' | 'cl' | null>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const clInputRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState('');
 
   useEffect(() => {
     if (user && user.user_metadata) {
@@ -40,7 +39,6 @@ export default function ProfilePage() {
       if (user.user_metadata.cl_url) {
         setCoverLetter({ name: user.user_metadata.cl_name || 'Cover Letter', url: user.user_metadata.cl_url });
       }
-      setName(user.user_metadata.name || '');
       setAvatar(user.user_metadata.avatar_url || null);
     }
   }, [user]);
@@ -87,7 +85,6 @@ export default function ProfilePage() {
 
     const { error } = await supabase.auth.updateUser({
       data: {
-        name,
         avatar_url,
         // you would also save notif and privacy settings here
       }
@@ -239,16 +236,6 @@ export default function ProfilePage() {
             <input type="file" accept="image/*" className="hidden" ref={fileInput} onChange={handleAvatarChange} />
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
-            {edit ? (
-              <input 
-                type="text" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-                className="text-xl font-semibold text-gray-900 dark:text-gray-100 bg-transparent text-center rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1 w-full"
-              />
-            ) : (
-              <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">{name || 'User'}</span>
-            )}
             <span className="text-base text-gray-500 dark:text-gray-400">{user.email}</span>
           </div>
           <div className="w-full mt-2 flex flex-col gap-2">
@@ -273,7 +260,6 @@ export default function ProfilePage() {
                     setEdit(false);
                     // Reset state if needed
                     if (user && user.user_metadata) {
-                      setName(user.user_metadata.name || '');
                       setAvatar(user.user_metadata.avatar_url || null);
                     }
                   }}
