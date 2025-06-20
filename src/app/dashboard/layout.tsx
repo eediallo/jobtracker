@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-provider';
+import { Toaster } from 'sonner';
 
 const tabs = [
   { name: 'My Jobs', href: '/dashboard/my-jobs', icon: (
@@ -43,6 +44,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 via-fuchsia-50 to-emerald-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <Toaster position="top-right" richColors closeButton />
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-white/70 dark:bg-gray-900/70 shadow-2xl border-r border-white/20 z-20 backdrop-blur-lg">
         <div className="flex flex-col items-center justify-center h-28 gap-2 select-none">
