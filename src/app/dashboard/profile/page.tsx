@@ -12,7 +12,7 @@ function getInitials(email?: string | null) {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -83,20 +83,11 @@ export default function ProfilePage() {
       avatar_url = publicUrl;
     }
 
-    const { error } = await supabase.auth.updateUser({
-      data: {
-        avatar_url,
-        // you would also save notif and privacy settings here
-      }
-    });
+    await updateUser({ avatar_url });
 
     setLoading(false);
-    if (error) {
-      toast.error('Failed to save changes.');
-    } else {
-      toast.success('Profile updated successfully!');
-      setEdit(false);
-    }
+    toast.success('Profile updated successfully!');
+    setEdit(false);
   }
 
   async function handleSignOut() {
