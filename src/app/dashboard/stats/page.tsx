@@ -49,7 +49,7 @@ function BarChart({ data, labels, colors }: { data: number[]; labels: string[]; 
             rx={6}
             className={colors[i]}
           />
-          <text x={i * 40 + 20} y={115} textAnchor="middle" className="text-xs fill-gray-500">{labels[i]}</text>
+          <text x={i * 40 + 20} y={115} textAnchor="end" className="text-xs fill-gray-500" transform={`rotate(-45 ${i * 40 + 20},115)`}>{labels[i]}</text>
           <text x={i * 40 + 20} y={120 - (v / max) * 90 - 25} textAnchor="middle" className="text-xs font-bold fill-gray-700">{v}</text>
         </g>
       ))}
