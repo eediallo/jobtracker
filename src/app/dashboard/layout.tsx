@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-provider';
 import { Toaster } from 'sonner';
 
@@ -24,8 +24,14 @@ const tabs = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login');
+    }
+  }, [user, loading, router]);
 
   function handleSignOut() {
     // sign out and redirect
@@ -40,6 +46,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (!email) return '?';
     const [name] = email.split('@');
     return name.slice(0, 2).toUpperCase();
+  }
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-fuchsia-50 to-emerald-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   return (
