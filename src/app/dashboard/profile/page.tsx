@@ -30,6 +30,7 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState<'cv' | 'cl' | null>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const clInputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState('');
 
   useEffect(() => {
     if (user && user.user_metadata) {
@@ -39,6 +40,8 @@ export default function ProfilePage() {
       if (user.user_metadata.cl_url) {
         setCoverLetter({ name: user.user_metadata.cl_name || 'Cover Letter', url: user.user_metadata.cl_url });
       }
+      setName(user.user_metadata.name || '');
+      setAvatar(user.user_metadata.avatar_url || null);
     }
   }, [user]);
 
@@ -55,6 +58,47 @@ export default function ProfilePage() {
     } else {
       setMessage('Password updated!');
       toast.success('Password updated!');
+    }
+  }
+
+  async function handleSaveChanges() {
+    if (!user) return;
+    setLoading(true);
+
+    let avatar_url = user.user_metadata.avatar_url;
+
+    if (avatar && avatar.startsWith('data:image')) {
+      const response = await fetch(avatar);
+      const blob = await response.blob();
+      const fileExt = blob.type.split('/')[1];
+      const fileName = `${user.id}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, blob, { upsert: true });
+
+      if (uploadError) {
+        toast.error('Failed to upload new avatar.');
+        setLoading(false);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(filePath);
+      avatar_url = publicUrl;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        name,
+        avatar_url,
+        // you would also save notif and privacy settings here
+      }
+    });
+
+    setLoading(false);
+    if (error) {
+      toast.error('Failed to save changes.');
+    } else {
+      toast.success('Profile updated successfully!');
+      setEdit(false);
     }
   }
 
@@ -194,17 +238,52 @@ export default function ProfilePage() {
             </div>
             <input type="file" accept="image/*" className="hidden" ref={fileInput} onChange={handleAvatarChange} />
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">{user.user_metadata?.name || 'User'}</span>
+          <div className="flex flex-col items-center gap-1 text-center">
+            {edit ? (
+              <input 
+                type="text" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                className="text-xl font-semibold text-gray-900 dark:text-gray-100 bg-transparent text-center rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1 w-full"
+              />
+            ) : (
+              <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">{name || 'User'}</span>
+            )}
             <span className="text-base text-gray-500 dark:text-gray-400">{user.email}</span>
           </div>
-          <button
-            onClick={() => setEdit(e => !e)}
-            className={`w-full mt-2 px-4 py-2 rounded-lg font-semibold transition-all shadow focus:outline-none focus:ring-2 focus:ring-blue-400 ${edit ? 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-            aria-pressed={edit}
-          >
-            {edit ? 'Cancel' : 'Edit Profile'}
-          </button>
+          <div className="w-full mt-2 flex flex-col gap-2">
+            {!edit ? (
+              <button
+                onClick={() => setEdit(true)}
+                className="w-full px-4 py-2 rounded-lg font-semibold transition-all shadow focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Edit Profile
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={handleSaveChanges}
+                  className="w-full px-4 py-2 rounded-lg font-semibold transition-all shadow focus:outline-none focus:ring-2 focus:ring-green-400 bg-green-600 text-white hover:bg-green-700"
+                  disabled={loading}
+                >
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button
+                  onClick={() => {
+                    setEdit(false);
+                    // Reset state if needed
+                    if (user && user.user_metadata) {
+                      setName(user.user_metadata.name || '');
+                      setAvatar(user.user_metadata.avatar_url || null);
+                    }
+                  }}
+                  className="w-full px-4 py-2 rounded-lg font-semibold transition-all shadow focus:outline-none focus:ring-2 focus:ring-gray-400 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
         </div>
         {/* Right: Editable Fields & Settings */}
         <div className="flex-1 flex flex-col gap-10">
