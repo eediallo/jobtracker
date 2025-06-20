@@ -69,8 +69,8 @@ export default function ProfilePage() {
       const response = await fetch(avatar);
       const blob = await response.blob();
       const fileExt = blob.type.split('/')[1];
-      const fileName = `${user.id}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const fileName = `avatar.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
       const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, blob, { upsert: true });
 
       if (uploadError) {
