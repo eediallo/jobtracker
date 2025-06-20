@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-provider';
-import type { Job } from '@/lib/types';
 
 const statusOptions = ['applied', 'interview', 'offer', 'rejected', 'accepted'];
 

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-provider';
 
 export default function Page() {
