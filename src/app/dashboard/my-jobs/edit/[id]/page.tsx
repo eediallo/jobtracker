@@ -99,7 +99,7 @@ export default function EditJobPage() {
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.position ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.position ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.position}
@@ -118,7 +118,7 @@ export default function EditJobPage() {
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.company ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.company ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.company}
@@ -137,7 +137,7 @@ export default function EditJobPage() {
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             autoComplete="off"
             data-has-value={!!form.city}
@@ -157,7 +157,7 @@ export default function EditJobPage() {
             type="date"
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg appearance-none ${error && !form.application_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg appearance-none ${error && !form.application_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-16`}
             placeholder=" "
             data-has-value={!!form.application_date}
           />
@@ -177,7 +177,7 @@ export default function EditJobPage() {
             value={form.status}
             onChange={handleChange}
             disabled={loading}
-            className="block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 pr-10 h-12"
+            className="block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 pr-10 h-16"
             data-has-value={!!form.status}
           >
             {statusOptions.map(opt => <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>)}
@@ -200,7 +200,7 @@ export default function EditJobPage() {
             placeholder=" "
             rows={2}
             disabled={loading}
-            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 resize-y min-h-[48px]"
+            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 resize-y min-h-[64px]"
             data-has-value={!!form.description}
           />
           <label className={
