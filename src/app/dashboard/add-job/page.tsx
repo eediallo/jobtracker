@@ -27,6 +27,10 @@ export default function AddJobPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!user) {
+      setError('You must be logged in to add a job.');
+      return;
+    }
     setLoading(true);
     setError('');
     const { error } = await supabase.from('jobs').insert({
