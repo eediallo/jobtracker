@@ -36,6 +36,7 @@ export default function AddJobPage() {
     const { error } = await supabase.from('jobs').insert({
       ...form,
       user_id: user.id,
+      title: form.position,
     });
     setLoading(false);
     if (error) setError(error.message);
