@@ -16,8 +16,7 @@ export default function AddJobPage() {
     city: '',
     application_date: '',
     status: 'applied',
-    description: '',
-    details: '',
+    job_link: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,10 +34,15 @@ export default function AddJobPage() {
     setLoading(true);
     setError('');
     const { error } = await supabase.from('jobs').insert({
-      ...form,
+      position: form.position,
+      company: form.company,
+      city: form.city,
+      application_date: form.application_date,
+      status: form.status,
       user_id: user.id,
       title: form.position,
       location: form.city,
+      job_link: form.job_link,
     });
     setLoading(false);
     if (error) {
@@ -131,31 +135,20 @@ export default function AddJobPage() {
             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" /></svg>
           </span>
         </div>
-        {/* Description */}
+        {/* Job Description Link */}
         <div className="relative mb-2">
-          <textarea
-            name="description"
-            value={form.description}
+          <input
+            name="job_link"
+            value={form.job_link || ''}
             onChange={handleChange}
-            placeholder=" "
-            rows={2}
+            required
             disabled={loading}
-            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 resize-y min-h-[48px]"
-          />
-          <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Description</label>
-        </div>
-        {/* Details */}
-        <div className="relative mb-2">
-          <textarea
-            name="details"
-            value={form.details}
-            onChange={handleChange}
+            type="url"
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.job_link ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
             placeholder=" "
-            rows={3}
-            disabled={loading}
-            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 resize-y min-h-[64px]"
+            autoComplete="off"
           />
-          <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Details</label>
+          <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Job Description Link <span className="text-red-500">*</span></label>
         </div>
         {/* Error message */}
         {error && <div className="flex items-center gap-2 text-red-500 text-sm mt-1"><svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 8v4m0 4h.01" /></svg>{error}</div>}
