@@ -4,12 +4,65 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-provider';
 import type { Job } from '@/lib/types';
 
-const statusLabels = ['applied', 'interview', 'offer', 'rejected', 'accepted'];
+const statusLabels = [
+  { key: 'applied', label: 'Applied', color: 'bg-gray-200', accent: 'border-gray-400', text: 'text-gray-700' },
+  { key: 'interview', label: 'Interview', color: 'bg-yellow-100', accent: 'border-yellow-400', text: 'text-yellow-700' },
+  { key: 'offer', label: 'Offer', color: 'bg-purple-100', accent: 'border-purple-400', text: 'text-purple-700' },
+  { key: 'rejected', label: 'Rejected', color: 'bg-red-100', accent: 'border-red-400', text: 'text-red-700' },
+  { key: 'accepted', label: 'Accepted', color: 'bg-green-100', accent: 'border-green-400', text: 'text-green-700' },
+];
+
+function countUp(n: number, duration = 800) {
+  // For number animation: returns a stateful value that animates from 0 to n
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    let raf: number;
+    const step = (ts: number) => {
+      start += Math.ceil(n / (duration / 16));
+      if (start >= n) {
+        setVal(n);
+        return;
+      }
+      setVal(start);
+      raf = requestAnimationFrame(step);
+    };
+    setVal(0);
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [n, duration]);
+  return val;
+}
+
+function BarChart({ data, labels, colors }: { data: number[]; labels: string[]; colors: string[] }) {
+  // Simple SVG bar chart
+  const max = Math.max(...data, 1);
+  return (
+    <svg viewBox={`0 0 ${data.length * 40} 120`} width="100%" height="120" className="overflow-visible">
+      {data.map((v, i) => (
+        <g key={i}>
+          <rect
+            x={i * 40 + 10}
+            y={120 - (v / max) * 90 - 20}
+            width={20}
+            height={(v / max) * 90}
+            rx={6}
+            className={colors[i]}
+          />
+          <text x={i * 40 + 20} y={115} textAnchor="middle" className="text-xs fill-gray-500">{labels[i]}</text>
+          <text x={i * 40 + 20} y={120 - (v / max) * 90 - 25} textAnchor="middle" className="text-xs font-bold fill-gray-700">{v}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
 
 export default function StatsPage() {
   const { user } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState<'30d' | '90d' | 'all'>('30d');
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -26,86 +79,115 @@ export default function StatsPage() {
   if (!user) return <div>Please log in.</div>;
   if (loading) return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Stats</h1>
+      <h1 className="text-3xl font-bold mb-6">Analytics</h1>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="p-4 bg-gray-100 rounded text-center animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-12 mx-auto mb-2" />
-            <div className="h-3 bg-gray-200 rounded w-16 mx-auto" />
-          </div>
+          <div key={i} className="p-6 bg-gray-100 rounded-2xl shadow animate-pulse h-24" />
         ))}
       </div>
-      <h2 className="text-lg font-semibold mb-2">Recent Applications</h2>
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2">Position</th>
-            <th className="p-2">Company</th>
-            <th className="p-2">City</th>
-            <th className="p-2">Date</th>
-            <th className="p-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <tr key={i} className="border-t animate-pulse">
-              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-24" /></td>
-              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-20" /></td>
-              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-16" /></td>
-              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-20" /></td>
-              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-16" /></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="h-40 bg-gray-100 rounded-xl animate-pulse mb-8" />
+      <div className="flex gap-2 mb-4">
+        <div className="w-32 h-10 bg-gray-100 rounded animate-pulse" />
+        <div className="w-32 h-10 bg-gray-100 rounded animate-pulse" />
+        <div className="w-10 h-10 bg-gray-100 rounded animate-pulse" />
+      </div>
+      <div className="h-8 w-40 bg-gray-100 rounded animate-pulse mb-2" />
+      <div className="h-32 bg-gray-100 rounded-xl animate-pulse" />
     </div>
   );
 
-  const total = jobs.length;
-  const byStatus = Object.fromEntries(statusLabels.map(s => [s, 0]));
-  jobs.forEach(job => {
+  // Filter jobs by date range
+  const now = new Date();
+  let filteredJobs = jobs;
+  if (dateRange !== 'all') {
+    const days = dateRange === '30d' ? 30 : 90;
+    const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    filteredJobs = jobs.filter(j => j.application_date && new Date(j.application_date) >= cutoff);
+  }
+
+  const total = filteredJobs.length;
+  const byStatus = Object.fromEntries(statusLabels.map(s => [s.key, 0]));
+  filteredJobs.forEach(job => {
     if (job.status && byStatus[job.status] !== undefined) byStatus[job.status]++;
   });
-  const recent = jobs.slice().sort((a, b) => (b.application_date || '').localeCompare(a.application_date || '')).slice(0, 5);
+  const recent = filteredJobs.slice().sort((a, b) => (b.application_date || '').localeCompare(a.application_date || '')).slice(0, 5);
+
+  // For number animation
+  const totalAnim = countUp(total);
+  const statusAnims = statusLabels.map(s => countUp(byStatus[s.key]));
+
+  // Color classes for bar chart
+  const barColors = statusLabels.map(s => s.accent.replace('border-', 'fill-'));
+
+  function handleExport() {
+    setExporting(true);
+    setTimeout(() => {
+      setExporting(false);
+      // Simulate export
+    }, 1200);
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Stats</h1>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <div className="p-4 bg-gray-100 rounded text-center">
-          <div className="text-lg font-bold">{total}</div>
-          <div className="text-xs text-gray-500">Total</div>
+      <h1 className="text-3xl font-bold mb-6">Analytics</h1>
+      {/* Filter Controls */}
+      <div className="flex flex-wrap gap-3 mb-6 items-center">
+        <div className="flex gap-2">
+          <button onClick={() => setDateRange('30d')} className={`px-4 py-2 rounded-lg font-semibold border transition-all ${dateRange === '30d' ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-white border-gray-300 text-gray-700 hover:bg-blue-50'}`}>30 Days</button>
+          <button onClick={() => setDateRange('90d')} className={`px-4 py-2 rounded-lg font-semibold border transition-all ${dateRange === '90d' ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-white border-gray-300 text-gray-700 hover:bg-blue-50'}`}>90 Days</button>
+          <button onClick={() => setDateRange('all')} className={`px-4 py-2 rounded-lg font-semibold border transition-all ${dateRange === 'all' ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-white border-gray-300 text-gray-700 hover:bg-blue-50'}`}>All Time</button>
         </div>
-        {statusLabels.map(s => (
-          <div key={s} className="p-4 bg-gray-100 rounded text-center">
-            <div className="text-lg font-bold">{byStatus[s]}</div>
-            <div className="text-xs text-gray-500">{s.charAt(0).toUpperCase() + s.slice(1)}</div>
+        <button onClick={handleExport} className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg font-semibold border border-gray-300 bg-white hover:bg-blue-50 transition-all shadow-sm">
+          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 4v12m0 0l-4-4m4 4l4-4" /><path d="M4 20h16" /></svg>
+          {exporting ? 'Exporting...' : 'Export'}
+        </button>
+      </div>
+      {/* Metric Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="p-6 bg-white rounded-2xl shadow flex flex-col items-center border-t-4 border-blue-500">
+          <div className="text-3xl font-bold text-blue-700 mb-1">{totalAnim}</div>
+          <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Total</div>
+        </div>
+        {statusLabels.map((s, i) => (
+          <div key={s.key} className={`p-6 rounded-2xl shadow flex flex-col items-center border-t-4 ${s.accent} bg-white`}>
+            <div className={`text-3xl font-bold mb-1 ${s.text}`}>{statusAnims[i]}</div>
+            <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">{s.label}</div>
           </div>
         ))}
       </div>
+      {/* Chart */}
+      <div className="bg-white rounded-2xl shadow p-6 mb-8">
+        <div className="font-semibold text-gray-700 mb-2">Applications by Status</div>
+        <BarChart data={statusLabels.map(s => byStatus[s.key])} labels={statusLabels.map(s => s.label)} colors={barColors} />
+      </div>
+      {/* Recent Applications Table */}
       <h2 className="text-lg font-semibold mb-2">Recent Applications</h2>
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2">Position</th>
-            <th className="p-2">Company</th>
-            <th className="p-2">City</th>
-            <th className="p-2">Date</th>
-            <th className="p-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recent.map(job => (
-            <tr key={job.id} className="border-t">
-              <td className="p-2">{job.position}</td>
-              <td className="p-2">{job.company}</td>
-              <td className="p-2">{job.city}</td>
-              <td className="p-2">{job.application_date}</td>
-              <td className="p-2">{job.status}</td>
+      <div className="overflow-x-auto">
+        <table className="w-full border rounded-xl overflow-hidden text-sm">
+          <thead>
+            <tr className="bg-[#f8f9fa] text-gray-700">
+              <th className="p-3 font-semibold text-left">Position</th>
+              <th className="p-3 font-semibold text-left">Company</th>
+              <th className="p-3 font-semibold text-left">City</th>
+              <th className="p-3 font-semibold text-left">Date</th>
+              <th className="p-3 font-semibold text-left">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {recent.map(job => (
+              <tr key={job.id} className="transition-colors hover:bg-blue-50 border-b">
+                <td className="p-3 font-medium text-gray-900" style={{fontSize:'1rem'}}>{job.position}</td>
+                <td className="p-3 text-gray-700">{job.company}</td>
+                <td className="p-3 text-gray-700">{job.city}</td>
+                <td className="p-3 text-gray-700">{job.application_date}</td>
+                <td className="p-3">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${statusLabels.find(s => s.key === job.status)?.color || 'bg-gray-200'} ${statusLabels.find(s => s.key === job.status)?.text || 'text-gray-700'}`}>{job.status}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 } 
