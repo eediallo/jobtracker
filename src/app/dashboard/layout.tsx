@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth-provider';
 import { Toaster } from 'sonner';
 
 const tabs = [
-  { name: 'My Jobs', href: '/dashboard/my-jobs', icon: (
+  { name: 'My Applications', href: '/dashboard/my-jobs', icon: (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 4h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
   ) },
   { name: 'Add Job', href: '/dashboard/add-job', icon: (
