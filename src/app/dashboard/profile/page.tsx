@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-provider';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -17,12 +18,18 @@ export default function ProfilePage() {
     setMessage('');
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
-    if (error) setError(error.message);
-    else setMessage('Password updated!');
+    if (error) {
+      setError(error.message);
+      toast.error('Failed to update password');
+    } else {
+      setMessage('Password updated!');
+      toast.success('Password updated!');
+    }
   }
 
   async function handleSignOut() {
     await supabase.auth.signOut();
+    toast.success('Signed out');
     window.location.href = '/';
   }
 
@@ -35,7 +42,7 @@ export default function ProfilePage() {
         <div className="font-semibold">Email:</div>
         <div>{user.email}</div>
       </div>
-      <form onSubmit={handlePasswordChange} className="flex flex-col gap-4 mb-6">
+      <form onSubmit={handlePasswordChange} className="flex flex-col gap-4 mb-6 opacity-100" style={{ pointerEvents: loading ? 'none' : 'auto', opacity: loading ? 0.7 : 1 }}>
         <label className="font-semibold">Change Password</label>
         <input
           type="password"
@@ -44,13 +51,13 @@ export default function ProfilePage() {
           onChange={e => setPassword(e.target.value)}
           className="input input-bordered"
           required
+          disabled={loading}
         />
         {error && <div className="text-red-500 text-sm">{error}</div>}
         {message && <div className="text-green-600 text-sm">{message}</div>}
-        <button type="submit" className="btn btn-primary w-full" disabled={loading}>
-          {loading ? 'Updating...' : 'Update Password'}
-        </button>
+        <button type="submit" className="btn btn-primary w-full flex items-center justify-center" disabled={loading}>{loading ? <span className="loader mr-2" /> : null}{loading ? 'Updating...' : 'Update Password'}</button>
       </form>
+      {loading && <div className="w-full flex justify-center mt-4"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}
       <button onClick={handleSignOut} className="btn btn-secondary w-full">Sign Out</button>
     </main>
   );

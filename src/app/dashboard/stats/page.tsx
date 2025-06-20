@@ -24,7 +24,42 @@ export default function StatsPage() {
   }, [user]);
 
   if (!user) return <div>Please log in.</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Stats</h1>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="p-4 bg-gray-100 rounded text-center animate-pulse">
+            <div className="h-6 bg-gray-200 rounded w-12 mx-auto mb-2" />
+            <div className="h-3 bg-gray-200 rounded w-16 mx-auto" />
+          </div>
+        ))}
+      </div>
+      <h2 className="text-lg font-semibold mb-2">Recent Applications</h2>
+      <table className="w-full border">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="p-2">Position</th>
+            <th className="p-2">Company</th>
+            <th className="p-2">City</th>
+            <th className="p-2">Date</th>
+            <th className="p-2">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <tr key={i} className="border-t animate-pulse">
+              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-24" /></td>
+              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-20" /></td>
+              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-16" /></td>
+              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-20" /></td>
+              <td className="p-2"><div className="h-4 bg-gray-200 rounded w-16" /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
   const total = jobs.length;
   const byStatus = Object.fromEntries(statusLabels.map(s => [s, 0]));
