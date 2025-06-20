@@ -65,7 +65,16 @@ export function JobTable({ jobs, onEdit, onDelete }: JobTableProps) {
             className={`transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-[#f8f9fa]'} hover:bg-blue-50`}
             style={{ borderBottom: '1px solid #e5e7eb' }}
           >
-            <td className="p-3 font-medium text-gray-900" style={{fontSize:'1rem'}}>{job.position}</td>
+            <td className="p-3 font-medium text-gray-900" style={{fontSize:'1rem'}}>
+              <div className="flex items-center gap-2">
+                {job.position}
+                {job.job_link && (
+                  <a href={job.job_link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700" title="Open job description">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                  </a>
+                )}
+              </div>
+            </td>
             <td className="p-3 text-gray-700">{job.company}</td>
             <td className="p-3 text-gray-700">{job.city}</td>
             <td className="p-3 text-gray-700">{job.application_date}</td>
