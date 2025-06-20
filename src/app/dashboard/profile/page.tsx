@@ -228,10 +228,10 @@ export default function ProfilePage() {
                 ) : (
                   <div className="text-sm text-gray-500 dark:text-gray-400 p-2 bg-white dark:bg-gray-700 rounded-lg border border-dashed">No CV uploaded.</div>
                 )}
-                <button onClick={() => cvInputRef.current?.click()} className="btn btn-secondary btn-sm mt-1 w-full" disabled={uploading === 'cv' || !edit}>
+                <button onClick={() => cvInputRef.current?.click()} className="btn btn-secondary btn-sm mt-1 w-full" disabled={uploading === 'cv'}>
                   {uploading === 'cv' ? 'Uploading...' : cv ? 'Replace CV' : 'Upload CV'}
                 </button>
-                <input type="file" ref={cvInputRef} onChange={(e) => handleFileUpload(e, 'cv')} className="hidden" accept=".pdf,.doc,.docx" disabled={!edit}/>
+                <input type="file" ref={cvInputRef} onChange={(e) => handleFileUpload(e, 'cv')} className="hidden" accept=".pdf,.doc,.docx"/>
               </div>
               {/* Cover Letter */}
               <div className="flex flex-col gap-2">
@@ -249,10 +249,10 @@ export default function ProfilePage() {
                 ) : (
                   <div className="text-sm text-gray-500 dark:text-gray-400 p-2 bg-white dark:bg-gray-700 rounded-lg border border-dashed">No Cover Letter uploaded.</div>
                 )}
-                <button onClick={() => clInputRef.current?.click()} className="btn btn-secondary btn-sm mt-1 w-full" disabled={uploading === 'cl' || !edit}>
+                <button onClick={() => clInputRef.current?.click()} className="btn btn-secondary btn-sm mt-1 w-full" disabled={uploading === 'cl'}>
                   {uploading === 'cl' ? 'Uploading...' : coverLetter ? 'Replace Letter' : 'Upload Letter'}
                 </button>
-                <input type="file" ref={clInputRef} onChange={(e) => handleFileUpload(e, 'cl')} className="hidden" accept=".pdf,.doc,.docx" disabled={!edit}/>
+                <input type="file" ref={clInputRef} onChange={(e) => handleFileUpload(e, 'cl')} className="hidden" accept=".pdf,.doc,.docx"/>
               </div>
             </div>
           </div>
