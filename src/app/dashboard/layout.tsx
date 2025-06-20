@@ -48,8 +48,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-white/70 dark:bg-gray-900/70 shadow-2xl border-r border-white/20 z-20 backdrop-blur-lg">
         <div className="flex flex-col items-center justify-center h-28 gap-2 select-none">
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-fuchsia-400 to-emerald-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-            {getInitials(user?.email)}
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-fuchsia-400 to-emerald-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg overflow-hidden">
+            {user?.user_metadata?.avatar_url ? (
+              <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              getInitials(user?.email)
+            )}
           </div>
           <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate max-w-[90%]">{user?.email}</div>
         </div>
@@ -94,8 +98,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           onClick={e => e.stopPropagation()}
         >
           <div className="flex flex-col items-center justify-center h-28 gap-2 select-none">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-fuchsia-400 to-emerald-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-              {getInitials(user?.email)}
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-fuchsia-400 to-emerald-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg overflow-hidden">
+              {user?.user_metadata?.avatar_url ? (
+                <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                getInitials(user?.email)
+              )}
             </div>
             <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate max-w-[90%]">{user?.email}</div>
           </div>
