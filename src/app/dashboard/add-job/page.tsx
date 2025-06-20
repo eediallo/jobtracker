@@ -54,52 +54,52 @@ export default function AddJobPage() {
 
   return (
     <main className="max-w-lg mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Add Job</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
+      <h1 className="text-2xl font-bold mb-6">Add Job</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl">
         {/* Position */}
-        <div className="relative">
+        <div className="relative mb-2">
           <input
             name="position"
             value={form.position}
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${error && !form.position ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.position ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
             placeholder=" "
             autoComplete="off"
           />
           <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Position <span className="text-red-500">*</span></label>
         </div>
         {/* Company */}
-        <div className="relative">
+        <div className="relative mb-2">
           <input
             name="company"
             value={form.company}
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${error && !form.company ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.company ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
             placeholder=" "
             autoComplete="off"
           />
           <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Company <span className="text-red-500">*</span></label>
         </div>
         {/* City */}
-        <div className="relative">
+        <div className="relative mb-2">
           <input
             name="city"
             value={form.city}
             onChange={handleChange}
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${error && !form.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg ${error && !form.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
             placeholder=" "
             autoComplete="off"
           />
           <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">City <span className="text-red-500">*</span></label>
         </div>
         {/* Date Picker */}
-        <div className="relative">
+        <div className="relative mb-2">
           <input
             name="application_date"
             value={form.application_date}
@@ -107,22 +107,22 @@ export default function AddJobPage() {
             type="date"
             required
             disabled={loading}
-            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none ${error && !form.application_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'}`}
+            className={`peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg appearance-none ${error && !form.application_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} h-12`}
             placeholder=" "
           />
           <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none flex items-center gap-1">
-            <svg className="w-4 h-4 inline-block mr-1 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+            <svg className="w-4 h-4 inline-block mr-1 text-[#007bff]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
             Application Date <span className="text-red-500">*</span>
           </label>
         </div>
         {/* Status Dropdown */}
-        <div className="relative">
+        <div className="relative mb-2">
           <select
             name="status"
             value={form.status}
             onChange={handleChange}
             disabled={loading}
-            className="block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:border-gray-700 pr-10"
+            className="block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 pr-10 h-12"
           >
             {statusOptions.map(opt => <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>)}
           </select>
@@ -132,7 +132,7 @@ export default function AddJobPage() {
           </span>
         </div>
         {/* Description */}
-        <div className="relative">
+        <div className="relative mb-2">
           <textarea
             name="description"
             value={form.description}
@@ -140,12 +140,12 @@ export default function AddJobPage() {
             placeholder=" "
             rows={2}
             disabled={loading}
-            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:border-gray-700 resize-y min-h-[48px]"
+            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 resize-y min-h-[48px]"
           />
           <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Description</label>
         </div>
         {/* Details */}
-        <div className="relative">
+        <div className="relative mb-2">
           <textarea
             name="details"
             value={form.details}
@@ -153,7 +153,7 @@ export default function AddJobPage() {
             placeholder=" "
             rows={3}
             disabled={loading}
-            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:border-gray-700 resize-y min-h-[64px]"
+            className="peer block w-full px-4 pt-6 pb-2 text-base bg-transparent border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:border-[#007bff] focus:shadow-lg border-gray-300 dark:border-gray-700 resize-y min-h-[64px]"
           />
           <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm bg-white dark:bg-gray-900 px-1 pointer-events-none">Details</label>
         </div>
@@ -162,8 +162,9 @@ export default function AddJobPage() {
         {/* Submit button */}
         <button
           type="submit"
-          className="btn btn-primary w-full flex items-center justify-center text-base font-semibold py-3 rounded-lg transition-all bg-gradient-to-r from-blue-600 to-fuchsia-500 hover:from-fuchsia-500 hover:to-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-lg"
+          className="btn btn-primary w-full flex items-center justify-center text-base font-semibold py-3 rounded-lg transition-all bg-gradient-to-r from-[#007bff] to-[#28a745] hover:from-[#28a745] hover:to-[#007bff] focus:ring-2 focus:ring-[#007bff] focus:outline-none shadow-lg"
           disabled={loading}
+          style={{ minHeight: 48 }}
         >
           {loading && <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />}
           {loading ? 'Adding...' : 'Add Job'}
