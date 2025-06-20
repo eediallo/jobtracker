@@ -37,6 +37,7 @@ export default function AddJobPage() {
       ...form,
       user_id: user.id,
       title: form.position,
+      location: form.city,
     });
     setLoading(false);
     if (error) setError(error.message);
