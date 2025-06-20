@@ -2,14 +2,17 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState<{email: boolean; password: boolean}>({email: false, password: false});
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const router = useRouter();
 
   const emailValid = email.length > 3 && email.includes('@');
@@ -17,14 +20,49 @@ export default function RegisterPage() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
     setTouched({email: true, password: true});
     if (!emailValid || !passwordValid) return;
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${location.origin}/auth/confirm`,
+      }
+    });
     setLoading(false);
-    if (error) setError(error.message);
-    else router.push('/dashboard');
+    if (error) {
+      toast.error(error.message);
+    } else if (data.user) {
+      if (data.user.identities?.length === 0) {
+        toast.error('User with this email already exists but is unconfirmed. Please check your email to confirm.');
+        setShowConfirmationMessage(true);
+      } else {
+        toast.success('Registration successful!');
+        setShowConfirmationMessage(true);
+      }
+    }
+  }
+
+  if (showConfirmationMessage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 text-center border border-gray-200 dark:border-gray-700">
+          <svg className="w-16 h-16 mx-auto text-blue-500 mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Confirm your email</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            We've sent a confirmation link to <strong>{email}</strong>. Please check your inbox and follow the link to complete your registration.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -81,8 +119,29 @@ export default function RegisterPage() {
               <span id="password-error" className="text-xs text-red-500 mt-1 block">Password must be at least 6 characters</span>
             )}
           </div>
+          {/* Confirm Password */}
+          <div className="relative">
+            <input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              onBlur={() => setTouched(t => ({...t, password: true}))}
+              className={`peer w-full px-4 pt-6 pb-2 rounded-lg border-2 bg-white/80 dark:bg-gray-800/80 outline-none transition-all duration-200 focus:border-blue-500 dark:focus:border-fuchsia-400 shadow-sm ${touched.password && password !== confirmPassword ? 'border-red-400' : 'border-gray-200 dark:border-gray-700'}`}
+              required
+              aria-invalid={touched.password && password !== confirmPassword}
+              aria-describedby="confirm-password-error"
+            />
+            <label htmlFor="confirmPassword" className="absolute left-4 top-2 text-gray-500 text-sm pointer-events-none transition-all duration-200 peer-focus:-translate-y-2 peer-focus:scale-90 peer-focus:text-blue-600 dark:peer-focus:text-fuchsia-400 peer-valid:-translate-y-2 peer-valid:scale-90 bg-white/80 dark:bg-gray-800/80 px-1 rounded">
+              Confirm Password
+            </label>
+            {touched.password && password !== confirmPassword && (
+              <span id="confirm-password-error" className="text-xs text-red-500 mt-1 block">Passwords do not match</span>
+            )}
+          </div>
           {error && <div className="text-red-500 text-sm animate-shake">{error}</div>}
-          <button type="submit" className="w-full py-3 rounded-lg font-bold text-lg bg-gradient-to-r from-blue-600 via-fuchsia-500 to-emerald-500 text-white shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" disabled={loading || !emailValid || !passwordValid} aria-busy={loading}>
+          <button type="submit" className="w-full py-3 rounded-lg font-bold text-lg bg-gradient-to-r from-blue-600 via-fuchsia-500 to-emerald-500 text-white shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" disabled={loading || !emailValid || !passwordValid || password !== confirmPassword}>
             {loading && <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>}
             {loading ? 'Registering...' : 'Register'}
           </button>
