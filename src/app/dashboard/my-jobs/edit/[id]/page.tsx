@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-provider';
+import { toast } from 'sonner';
 
 const statusOptions = ['applied', 'interview', 'offer', 'rejected', 'accepted'];
 
@@ -63,12 +64,27 @@ export default function EditJobPage() {
     setError('');
     const { error } = await supabase.from('jobs').update(form).eq('id', id).eq('user_id', user.id);
     setLoading(false);
-    if (error) setError(error.message);
-    else router.push('/dashboard/my-jobs');
+    if (error) {
+      setError(error.message);
+      toast.error('Failed to update job');
+    } else {
+      toast.success('Job updated!');
+      router.push('/dashboard/my-jobs');
+    }
   }
 
   if (!user) return <div>Please log in.</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <main className="max-w-lg mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Edit Job</h1>
+      <div className="flex flex-col gap-4">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="h-10 bg-gray-200 rounded animate-pulse" />
+        ))}
+        <div className="w-full flex justify-center mt-4"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>
+      </div>
+    </main>
+  );
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
