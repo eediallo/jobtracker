@@ -12,13 +12,13 @@ const statusLabels = [
   { key: 'accepted', label: 'Accepted', color: 'bg-green-100', accent: 'border-green-400', text: 'text-green-700' },
 ];
 
-function countUp(n: number, duration = 800) {
+function useCountUp(n: number, duration = 800) {
   // For number animation: returns a stateful value that animates from 0 to n
   const [val, setVal] = useState(0);
   useEffect(() => {
     let start = 0;
     let raf: number;
-    const step = (ts: number) => {
+    const step = () => {
       start += Math.ceil(n / (duration / 16));
       if (start >= n) {
         setVal(n);
@@ -64,6 +64,36 @@ export default function StatsPage() {
   const [dateRange, setDateRange] = useState<'30d' | '90d' | 'all'>('30d');
   const [exporting, setExporting] = useState(false);
 
+  // Always call hooks before any return
+  // Compute filtered jobs and metrics with fallback for loading/user
+  const now = new Date();
+  let filteredJobs: Job[] = [];
+  if (user && jobs.length > 0) {
+    filteredJobs = jobs;
+    if (dateRange !== 'all') {
+      const days = dateRange === '30d' ? 30 : 90;
+      const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+      filteredJobs = jobs.filter(j => j.application_date && new Date(j.application_date) >= cutoff);
+    }
+  }
+  const total = filteredJobs.length;
+  const byStatus = Object.fromEntries(statusLabels.map(s => [s.key, 0]));
+  filteredJobs.forEach(job => {
+    if (job.status && byStatus[job.status] !== undefined) byStatus[job.status]++;
+  });
+  const recent = filteredJobs.slice().sort((a, b) => (b.application_date || '').localeCompare(a.application_date || '')).slice(0, 5);
+
+  // For number animation (always call hooks)
+  const totalAnim = useCountUp(user ? total : 0);
+  const appliedAnim = useCountUp(user ? byStatus['applied'] : 0);
+  const interviewAnim = useCountUp(user ? byStatus['interview'] : 0);
+  const offerAnim = useCountUp(user ? byStatus['offer'] : 0);
+  const rejectedAnim = useCountUp(user ? byStatus['rejected'] : 0);
+  const acceptedAnim = useCountUp(user ? byStatus['accepted'] : 0);
+
+  // Color classes for bar chart
+  const barColors = statusLabels.map(s => s.accent.replace('border-', 'fill-'));
+
   useEffect(() => {
     if (!user) return;
     supabase
@@ -75,6 +105,14 @@ export default function StatsPage() {
         setLoading(false);
       });
   }, [user]);
+
+  function handleExport() {
+    setExporting(true);
+    setTimeout(() => {
+      setExporting(false);
+      // Simulate export
+    }, 1200);
+  }
 
   if (!user) return <div>Please log in.</div>;
   if (loading) return (
@@ -95,37 +133,6 @@ export default function StatsPage() {
       <div className="h-32 bg-gray-100 rounded-xl animate-pulse" />
     </div>
   );
-
-  // Filter jobs by date range
-  const now = new Date();
-  let filteredJobs = jobs;
-  if (dateRange !== 'all') {
-    const days = dateRange === '30d' ? 30 : 90;
-    const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-    filteredJobs = jobs.filter(j => j.application_date && new Date(j.application_date) >= cutoff);
-  }
-
-  const total = filteredJobs.length;
-  const byStatus = Object.fromEntries(statusLabels.map(s => [s.key, 0]));
-  filteredJobs.forEach(job => {
-    if (job.status && byStatus[job.status] !== undefined) byStatus[job.status]++;
-  });
-  const recent = filteredJobs.slice().sort((a, b) => (b.application_date || '').localeCompare(a.application_date || '')).slice(0, 5);
-
-  // For number animation
-  const totalAnim = countUp(total);
-  const statusAnims = statusLabels.map(s => countUp(byStatus[s.key]));
-
-  // Color classes for bar chart
-  const barColors = statusLabels.map(s => s.accent.replace('border-', 'fill-'));
-
-  function handleExport() {
-    setExporting(true);
-    setTimeout(() => {
-      setExporting(false);
-      // Simulate export
-    }, 1200);
-  }
 
   return (
     <div>
@@ -148,12 +155,26 @@ export default function StatsPage() {
           <div className="text-3xl font-bold text-blue-700 mb-1">{totalAnim}</div>
           <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Total</div>
         </div>
-        {statusLabels.map((s, i) => (
-          <div key={s.key} className={`p-6 rounded-2xl shadow flex flex-col items-center border-t-4 ${s.accent} bg-white`}>
-            <div className={`text-3xl font-bold mb-1 ${s.text}`}>{statusAnims[i]}</div>
-            <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">{s.label}</div>
-          </div>
-        ))}
+        <div className="p-6 rounded-2xl shadow flex flex-col items-center border-t-4 border-gray-400 bg-white">
+          <div className="text-3xl font-bold mb-1 text-gray-700">{appliedAnim}</div>
+          <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Applied</div>
+        </div>
+        <div className="p-6 rounded-2xl shadow flex flex-col items-center border-t-4 border-yellow-400 bg-white">
+          <div className="text-3xl font-bold mb-1 text-yellow-700">{interviewAnim}</div>
+          <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Interview</div>
+        </div>
+        <div className="p-6 rounded-2xl shadow flex flex-col items-center border-t-4 border-purple-400 bg-white">
+          <div className="text-3xl font-bold mb-1 text-purple-700">{offerAnim}</div>
+          <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Offer</div>
+        </div>
+        <div className="p-6 rounded-2xl shadow flex flex-col items-center border-t-4 border-red-400 bg-white">
+          <div className="text-3xl font-bold mb-1 text-red-700">{rejectedAnim}</div>
+          <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Rejected</div>
+        </div>
+        <div className="p-6 rounded-2xl shadow flex flex-col items-center border-t-4 border-green-400 bg-white">
+          <div className="text-3xl font-bold mb-1 text-green-700">{acceptedAnim}</div>
+          <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Accepted</div>
+        </div>
       </div>
       {/* Chart */}
       <div className="bg-white rounded-2xl shadow p-6 mb-8">
