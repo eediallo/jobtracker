@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-provider';
 import type { Job } from '@/lib/types';
+import * as XLSX from 'xlsx';
 
 const statusLabels = [
   { key: 'applied', label: 'Applied', color: 'bg-gray-200', accent: 'border-gray-400', text: 'text-gray-700' },
@@ -63,6 +64,7 @@ export default function StatsPage() {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<'30d' | '90d' | 'all'>('30d');
   const [exporting, setExporting] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Always call hooks before any return
   // Compute filtered jobs and metrics with fallback for loading/user
@@ -106,11 +108,56 @@ export default function StatsPage() {
       });
   }, [user]);
 
-  function handleExport() {
+  function handleExport(format: 'csv' | 'xlsx') {
     setExporting(true);
+    setShowExportModal(false);
+
+    const summaryData = [
+      ['Metric', 'Value'],
+      ['Total Applications', total],
+      ...statusLabels.map(s => [s.label, byStatus[s.key]])
+    ];
+
+    const jobsData = filteredJobs.map(job => ({
+      Position: job.position,
+      Company: job.company,
+      City: job.city,
+      'Application Date': job.application_date,
+      Status: job.status,
+      'Job Link': job.job_link,
+    }));
+
+    if (format === 'xlsx') {
+      const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+      const jobsSheet = XLSX.utils.json_to_sheet(jobsData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+      XLSX.utils.book_append_sheet(workbook, jobsSheet, 'Jobs');
+      XLSX.writeFile(workbook, `JobTracker_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+    } else { // CSV
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Summary\n";
+      summaryData.forEach(row => {
+        csvContent += row.join(",") + "\n";
+      });
+      csvContent += "\nJobs\n";
+      const jobsHeader = Object.keys(jobsData[0] || {}).join(",");
+      csvContent += jobsHeader + "\n";
+      jobsData.forEach(job => {
+        const row = Object.values(job).join(",");
+        csvContent += row + "\n";
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `JobTracker_Export_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     setTimeout(() => {
       setExporting(false);
-      // Simulate export
     }, 1200);
   }
 
@@ -144,7 +191,7 @@ export default function StatsPage() {
           <button onClick={() => setDateRange('90d')} className={`px-4 py-2 rounded-lg font-semibold border transition-all ${dateRange === '90d' ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-white border-gray-300 text-gray-700 hover:bg-blue-50'}`}>90 Days</button>
           <button onClick={() => setDateRange('all')} className={`px-4 py-2 rounded-lg font-semibold border transition-all ${dateRange === 'all' ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-white border-gray-300 text-gray-700 hover:bg-blue-50'}`}>All Time</button>
         </div>
-        <button onClick={handleExport} className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg font-semibold border border-gray-300 bg-white hover:bg-blue-50 transition-all shadow-sm">
+        <button onClick={() => setShowExportModal(true)} className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg font-semibold border border-gray-300 bg-white hover:bg-blue-50 transition-all shadow-sm" disabled={exporting}>
           <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 4v12m0 0l-4-4m4 4l4-4" /><path d="M4 20h16" /></svg>
           {exporting ? 'Exporting...' : 'Export'}
         </button>
@@ -209,6 +256,30 @@ export default function StatsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowExportModal(false)}>
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 max-w-sm w-full flex flex-col items-center gap-6" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Export Data</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-center text-sm">Select a format to download your statistics and job application data.</p>
+            <div className="flex flex-col gap-4 w-full">
+              <button onClick={() => handleExport('xlsx')} className="flex items-center justify-center gap-3 w-full py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition-all focus:outline-none focus:ring-2 focus:ring-green-400">
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M22,16V4C22,2.89 21.1,2 20,2H4A2,2 0 0,0 2,4V20A2,2 0 0,0 4,22H16L22,16M11,18L13.5,13L15,15.5L16.5,12.5L19,18H11M4,4H20V12H15C13.89,12 13,12.89 13,14V15H11.5L9,11.5L6,16.5L4,13.5V4Z" /></svg>
+                Export as Excel (.xlsx)
+              </button>
+              <button onClick={() => handleExport('csv')} className="flex items-center justify-center gap-3 w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11.5,16.5H8.5V13.5H11.5V16.5M11.5,12H8.5V9H11.5V12M16.5,16.5H13.5V9H16.5V16.5Z" /></svg>
+                Export as CSV (.csv)
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 text-center mt-2">
+              To use in Google Sheets, export as Excel or CSV and import it from your Google Drive.
+            </p>
+            <button onClick={() => setShowExportModal(false)} className="mt-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

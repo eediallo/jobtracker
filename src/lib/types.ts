@@ -1,3 +1,5 @@
+import { Session, User } from '@supabase/supabase-js';
+
 export type Json =
   | string
   | number
@@ -8,15 +10,19 @@ export type Json =
 
 export interface Job {
   id: number;
-  user_id: string | null;
-  position: string | null;
-  company: string | null;
-  city: string | null;
-  application_date: string | null;
-  status: string | null;
+  user_id: string;
+  position: string;
+  company: string;
+  city: string;
+  application_date: string;
+  status: string;
   title: string;
-  description: string;
   location: string;
-  details: string | null;
-  created_at: string | null;
+  job_link?: string;
+}
+
+export interface PageProps {
+  params: {
+    id: string;
+  };
 } 
