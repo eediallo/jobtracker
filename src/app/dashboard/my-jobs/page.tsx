@@ -54,7 +54,7 @@ export default function MyJobsPage() {
 
     setUploading(type);
 
-    let { error: uploadError } = await supabase.storage.from('documents').upload(filePath, file, {
+    const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, file, {
       cacheControl: '3600',
       upsert: true,
     });
