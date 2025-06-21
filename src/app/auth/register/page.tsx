@@ -28,7 +28,7 @@ export default function RegisterPage() {
     if (!emailValid || !passwordValid) return;
     setLoading(true);
     setError('');
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -57,7 +57,7 @@ export default function RegisterPage() {
           </svg>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Confirm your email</h1>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            We've sent a confirmation link to <strong>{email}</strong>. Please check your inbox and follow the link to complete your registration.
+            We&apos;ve sent a confirmation link to <strong>{email}</strong>. Please check your inbox and follow the link to complete your registration.
           </p>
         </div>
       </div>
