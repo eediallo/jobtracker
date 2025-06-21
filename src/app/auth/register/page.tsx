@@ -36,7 +36,7 @@ export default function RegisterPage() {
     if (!emailValid || !passwordValid) return;
     setLoading(true);
     setError('');
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -46,20 +46,13 @@ export default function RegisterPage() {
     setLoading(false);
     if (error) {
       if (error.message.includes('User already registered')) {
-        toast.info('An account with this email already exists. Redirecting to login...');
-        router.push('/auth/login');
+        toast.info('An account with this email already exists. Attempting to log you in...');
+        await supabase.auth.signInWithPassword({ email, password });
       } else {
         toast.error(error.message);
       }
-    } else if (data.user) {
-      if (data.user.email_confirmed_at) {
-        toast.success('Welcome back! Redirecting to your dashboard...');
-      } else {
-        if (data.user.identities?.length === 0) {
-          toast.info('This email is already registered but unconfirmed. We sent the confirmation link again.');
-        }
-        setShowConfirmationMessage(true);
-      }
+    } else {
+      setShowConfirmationMessage(true);
     }
   }
 
