@@ -13,8 +13,9 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState<{email: boolean; password: boolean}>({email: false, password: false});
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const router = useRouter();
-  const { user, loading: authLoading, showEmailConfirmation, setShowEmailConfirmation } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const emailValid = email.length > 3 && email.includes('@');
   const passwordValid = password.length >= 6;
@@ -24,11 +25,6 @@ export default function RegisterPage() {
       router.push('/dashboard/my-jobs');
     }
   }, [user, router]);
-
-  useEffect(() => {
-    // Reset confirmation on mount just in case
-    setShowEmailConfirmation(false);
-  }, [setShowEmailConfirmation]);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -40,7 +36,7 @@ export default function RegisterPage() {
     if (!emailValid || !passwordValid) return;
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -50,8 +46,13 @@ export default function RegisterPage() {
     setLoading(false);
     if (error) {
       toast.error(error.message);
+    } else if (data.user) {
+      if (data.user.email_confirmed_at) {
+        toast.success('Welcome back! Redirecting to your dashboard...');
+      } else {
+        setShowConfirmationMessage(true);
+      }
     }
-    // AuthProvider will handle the result of the signup
   }
 
   if (authLoading) {
@@ -62,7 +63,7 @@ export default function RegisterPage() {
     );
   }
 
-  if (showEmailConfirmation) {
+  if (showConfirmationMessage) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 text-center border border-gray-200 dark:border-gray-700">

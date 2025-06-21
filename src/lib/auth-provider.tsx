@@ -8,15 +8,11 @@ export const AuthContext = createContext<{
   user: User | null;
   session: Session | null;
   loading: boolean;
-  showEmailConfirmation: boolean;
-  setShowEmailConfirmation: (show: boolean) => void;
   updateUser: (data: object) => Promise<void>;
 }>({
   user: null,
   session: null,
   loading: true,
-  showEmailConfirmation: false,
-  setShowEmailConfirmation: () => {},
   updateUser: async () => {},
 });
 
@@ -24,7 +20,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
 
   async function updateUser(data: object) {
     if (!user) return;
@@ -51,17 +46,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         const currentUser = session?.user;
-        if (currentUser) {
-          if (currentUser.email_confirmed_at) {
-            setUser(currentUser);
-            setShowEmailConfirmation(false);
-          } else {
-            setUser(null);
-            setShowEmailConfirmation(true);
-          }
+        // Only set user if email is confirmed
+        if (currentUser && currentUser.email_confirmed_at) {
+          setUser(currentUser);
         } else {
           setUser(null);
-          setShowEmailConfirmation(false);
         }
         setSession(session);
         setLoading(false);
@@ -77,8 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     loading,
-    showEmailConfirmation,
-    setShowEmailConfirmation,
     updateUser,
   };
 
