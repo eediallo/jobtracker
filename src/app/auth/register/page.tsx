@@ -36,7 +36,7 @@ export default function RegisterPage() {
     if (!emailValid || !passwordValid) return;
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -45,14 +45,14 @@ export default function RegisterPage() {
     });
     setLoading(false);
     if (error) {
-      if (error.message.includes('User already registered')) {
-        toast.info('An account with this email already exists. Attempting to log you in...');
-        await supabase.auth.signInWithPassword({ email, password });
+      toast.error(error.message);
+    } else if (data.user) {
+      if (data.user.email_confirmed_at) {
+        toast.success('Welcome back! Redirecting to your dashboard...');
+        // The page's useEffect will now handle the redirect since onAuthStateChange will fire
       } else {
-        toast.error(error.message);
+        setShowConfirmationMessage(true);
       }
-    } else {
-      setShowConfirmationMessage(true);
     }
   }
 
