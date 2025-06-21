@@ -1,0 +1,28 @@
+{
+  "name": "jobtracker",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "environmentVariables": {
+    "OPENAI_API_KEY": {
+      "description": "OpenAI API Key for AI Job Agent functionality",
+      "required": true,
+      "type": "secret"
+    },
+    "NEXT_PUBLIC_SUPABASE_URL": {
+      "description": "Supabase project URL",
+      "required": false,
+      "type": "string"
+    },
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
+      "description": "Supabase anonymous key",
+      "required": false,
+      "type": "secret"
+    }
+  },
+  "deployment": {
+    "autoDeploy": true,
+    "branch": "main"
+  }
+} 
