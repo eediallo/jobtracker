@@ -28,7 +28,7 @@ export default function RegisterPage() {
     if (!emailValid || !passwordValid) return;
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -43,8 +43,13 @@ export default function RegisterPage() {
       } else {
         toast.error(error.message);
       }
-    } else {
-      setShowConfirmationMessage(true);
+    } else if (data.user) {
+      if (data.user.identities?.length === 0) {
+        toast.error('User with this email already exists but is unconfirmed. Please check your email to confirm.');
+        setShowConfirmationMessage(true);
+      } else {
+        setShowConfirmationMessage(true);
+      }
     }
   }
 
