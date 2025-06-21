@@ -39,7 +39,6 @@ export default function RegisterPage() {
     if (error) {
       if (error.message.includes('User already registered')) {
         toast.info('An account with this email already exists. Redirecting to login...');
-        supabase.auth.signOut();
         router.push('/auth/login');
       } else {
         toast.error(error.message);

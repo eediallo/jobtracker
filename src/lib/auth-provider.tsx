@@ -45,7 +45,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        setUser(session?.user ?? null);
+        const currentUser = session?.user;
+        // Only set user if email is confirmed
+        if (currentUser && currentUser.email_confirmed_at) {
+          setUser(currentUser);
+        } else {
+          setUser(null);
+        }
         setSession(session);
         setLoading(false);
       }
