@@ -52,10 +52,14 @@ export default function RegisterPage() {
         toast.error(error.message);
       }
     } else if (data.user) {
-      if (data.user.identities?.length === 0) {
-        toast.info('This email is already registered but unconfirmed. We sent the confirmation link again.');
+      if (data.user.email_confirmed_at) {
+        toast.success('Welcome back! Redirecting to your dashboard...');
+      } else {
+        if (data.user.identities?.length === 0) {
+          toast.info('This email is already registered but unconfirmed. We sent the confirmation link again.');
+        }
+        setShowConfirmationMessage(true);
       }
-      setShowConfirmationMessage(true);
     }
   }
 
