@@ -37,7 +37,12 @@ export default function RegisterPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes('User already registered')) {
+        toast.info('An account with this email already exists. Redirecting to login...');
+        router.push('/auth/login');
+      } else {
+        toast.error(error.message);
+      }
     } else {
       setShowConfirmationMessage(true);
     }
