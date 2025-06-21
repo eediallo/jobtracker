@@ -38,14 +38,8 @@ export default function RegisterPage() {
     setLoading(false);
     if (error) {
       toast.error(error.message);
-    } else if (data.user) {
-      if (data.user.identities?.length === 0) {
-        toast.error('User with this email already exists but is unconfirmed. Please check your email to confirm.');
-        setShowConfirmationMessage(true);
-      } else {
-        toast.success('Registration successful!');
-        setShowConfirmationMessage(true);
-      }
+    } else {
+      setShowConfirmationMessage(true);
     }
   }
 
