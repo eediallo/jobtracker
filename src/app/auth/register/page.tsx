@@ -1,8 +1,9 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useAuth } from '@/lib/auth-provider';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -14,9 +15,16 @@ export default function RegisterPage() {
   const [touched, setTouched] = useState<{email: boolean; password: boolean}>({email: false, password: false});
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
   const emailValid = email.length > 3 && email.includes('@');
   const passwordValid = password.length >= 6;
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard/my-jobs');
+    }
+  }, [user, router]);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -45,10 +53,18 @@ export default function RegisterPage() {
       }
     } else if (data.user) {
       if (data.user.identities?.length === 0) {
-        toast.error('User with this email already exists but is unconfirmed. Please check your email to confirm.');
+        toast.info('This email is already registered but unconfirmed. We sent the confirmation link again.');
       }
       setShowConfirmationMessage(true);
     }
+  }
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gray-900">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   if (showConfirmationMessage) {
