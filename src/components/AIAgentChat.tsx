@@ -33,7 +33,7 @@ export default function AIAgentChat() {
       } else {
         setMessages(msgs => [...msgs, { sender: 'agent', text: 'Sorry, I could not find a suitable job right now.' }]);
       }
-    } catch (e) {
+    } catch {
       setMessages(msgs => [...msgs, { sender: 'agent', text: 'There was an error searching for jobs.' }]);
     }
     setLoading(false);
