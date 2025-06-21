@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth-provider';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import AIAgentChat from '@/components/AIAgentChat';
 
 function getInitials(email?: string | null) {
   if (!email) return '?';
@@ -436,6 +437,7 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+      <AIAgentChat />
     </main>
   );
 } 
