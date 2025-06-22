@@ -1,6 +1,50 @@
 # Jobtracker
 
-Jobtracker is a modern, full-stack web application for tracking and analyzing your job search. It helps you organize job applications, monitor your progress, and gain insights with a beautiful, responsive dashboard.
+## Summary
+
+Jobtracker is a modern, full-stack web application that empowers users to efficiently track, manage, and analyze their job search process. With a focus on usability, analytics, and responsive design, Jobtracker streamlines the job application journey for individuals seeking new opportunities.
+
+## Overview
+
+Jobtracker provides a seamless experience for job seekers to:
+- Register and securely log in to their own dashboard.
+- Add, edit, and delete job applications with key details (position, company, city, date, status, and a job description link).
+- Visualize their job search progress with animated statistics and charts.
+- Manage their personal profile, including avatar upload and privacy settings.
+- Enjoy a fully responsive interface optimized for both desktop and mobile devices.
+
+The application is built using Next.js (App Router), TypeScript, Tailwind CSS, and Supabase for authentication and data storage. Vercel is used for deployment, and the development process was enhanced by AI-powered tools and the Cursor IDE.
+
+## Demo
+
+Below are example screenshots of the Jobtracker application in action:
+
+### Landing page
+
+<img width="1649" alt="image" src="https://github.com/user-attachments/assets/a025f183-0807-4843-a5b1-4aec21fd1e4f" />
+<img width="1620" alt="image" src="https://github.com/user-attachments/assets/2a6cd543-9ca9-498c-9a36-d0cb033325e2" />
+
+### My Applications
+<img width="1673" alt="image" src="https://github.com/user-attachments/assets/f32e5a39-0dfc-400d-b21d-a7599b74e085" />
+
+### Add Job Form
+
+<img width="1669" alt="image" src="https://github.com/user-attachments/assets/dae3187a-cdf5-42d6-a8ff-9dab8c4e51a7" />
+*Add Job: Quickly add new job applications with a modern, validated form.*
+
+### Stats & Analytics
+
+<img width="1672" alt="image" src="https://github.com/user-attachments/assets/dbbb0fbc-b34a-45a3-bb88-1f43026d9cf9" />
+
+### Profile Management
+
+<img width="1671" alt="image" src="https://github.com/user-attachments/assets/10d7399f-7301-4148-8460-b628f1e218d4" />
+
+
+
+---
+
+# Core features 
 
 - **Authentication:** Secure registration and login with Supabase.
 - **Dashboard:** Central hub for all job search activities.
@@ -27,20 +71,8 @@ This project was developed with the help of VibeOps, an AI-powered coding and de
 - **Code Push Automation:** Assisted with pushing code to both GitHub and GitLab, ensuring CI/CD integration.
 - **Prompt-driven Development:** Used natural language prompts to refactor UI, implement features, and debug issues.
 
-## Main Prompts Used During Development
 
-A selection of the main prompts and requests that guided the development process:
-
-- "Create a job application tracking app with the following features:\nAuthentication:\nUser registration and login\nRedirect to dashboard after login\nDashboard with 4 main sections:\nMy Jobs - Display user's job applications\nFields: position name, company, city, application date, status\nActions: edit, delete buttons per job\nLayout: table view (desktop), card view (mobile)\nAdd Job - Form to add new job applications\nStats - Analytics dashboard showing application statistics\nProfile - User's personal information management\nResponsive Design: Optimize for both desktop and mobile interfaces."
-- "Restyle the My Jobs tab for desktop and mobile with brand colors, status badges, and improved accessibility."
-- "Refactor Add Job and Edit Job forms to use floating labels, a single Job Description Link field, and consistent validation."
-- "Overhaul the Profile tab: add avatar upload, edit mode, toggle switches, and a Danger Zone for account deletion."
-- "Redesign the Stats tab with animated metric cards, a custom SVG bar chart, and filter controls."
-- "Investigate and fix Vercel deployment errors using build logs."
-- "Update the README to reflect the current application and development process."
-- "Commit and push changes to both GitHub and GitLab using VibeOps."
-
-## AI Assistants & Credits
+## AI Assistants
 
 This project was built with the collaborative help of several AI assistants and tools:
 
