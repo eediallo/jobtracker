@@ -1,6 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const supabaseUrl = 'https://hqbvufyromcaizodepgn.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxYnZ1Znlyb21jYWl6b2RlcGduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0MjgyMTEsImV4cCI6MjA2NjAwNDIxMX0.IBfUuuBA4vwTw0BJgofKtD4LRqbVY3FrxpD3KpcB7zM';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey); 
