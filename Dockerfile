@@ -1,26 +1,21 @@
-# Install dependencies only when needed
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --prefer-offline --no-audit
+# Use the Node.js 20.13.1 base image
+FROM node:20.13.1
 
-# Rebuild the source code only when needed
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Set the working directory inside the container
+WORKDIR /src
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the entire application code
 COPY . .
-RUN npm run build
 
-# Production image, copy all the files and run next
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
+# Build the application
+RUN npm build
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# Expose the port your app runs on
 EXPOSE 3000
 
-CMD ["npm", "start"] 
+# Command to start the application
+CMD ["yarn", "start"]
