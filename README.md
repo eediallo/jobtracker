@@ -78,5 +78,4 @@ This project was built with the collaborative help of several AI assistants and 
 
 - **VibeOps (AI Coding Assistant):** Main pair-programmer for code, refactoring, debugging, and deployment automation.
 - **Claude (Anthropic):** Assisted in drafting and refining natural language prompts and requirements.
-- **ChatGPT (OpenAI):** Used for final submission formatting and review.
 - **Cursor (IDE):** All development and AI-assisted coding was performed in the [Cursor](https://www.cursor.so/) IDE, which integrates AI tools for seamless coding and collaboration.
