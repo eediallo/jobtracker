@@ -1,21 +1,20 @@
-# Use the Node.js 20.13.1 base image
-FROM node:20.13.1
-
-# Set the working directory inside the container
-WORKDIR /src
-
-# Copy package files and install dependencies
+# Build stage
+FROM node:20.13.1 AS builder
+WORKDIR /app
 COPY package*.json ./
 RUN npm install
-
-# Copy the entire application code
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Expose the port your app runs on
+# Production stage
+FROM node:20.13.1 AS runner
+WORKDIR /app
+
+# Copy standalone output and static assets
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
 
-# Command to start the application
-CMD ["yarn", "start"]
+CMD ["node", "server.js"]
