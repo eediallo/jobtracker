@@ -41,6 +41,7 @@ export default function ProfilePage() {
   // Fetch signed URL for avatar on profile load
   useEffect(() => {
     async function fetchAvatar() {
+      setAvatarLoading(true);
       if (user && getAvatarFilePath(user)) {
         const filePath = getAvatarFilePath(user);
         const { data, error } = await supabase.storage.from('documents').createSignedUrl(filePath, 60 * 60); // 1 hour
@@ -52,6 +53,7 @@ export default function ProfilePage() {
       } else {
         setAvatar(null);
       }
+      setAvatarLoading(false);
     }
     fetchAvatar();
   }, [user]);
@@ -90,6 +92,7 @@ export default function ProfilePage() {
     let avatar_path = getAvatarFilePath(user);
 
     if (avatarFile) {
+      setAvatarLoading(true);
       // Remove all previous avatar files for this user
       const exts = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
       const oldFiles = exts.map(ext => `${user.id}/avatar.${ext}`);
@@ -102,6 +105,7 @@ export default function ProfilePage() {
       if (uploadError) {
         toast.error('Failed to upload new avatar.');
         setLoading(false);
+        setAvatarLoading(false);
         return;
       }
       avatar_path = filePath;
@@ -113,6 +117,7 @@ export default function ProfilePage() {
         setAvatar(null);
       }
       await updateUser({ avatar_path }); // Store file path in user metadata
+      setAvatarLoading(false);
     } else {
       await updateUser({ avatar_path });
     }
