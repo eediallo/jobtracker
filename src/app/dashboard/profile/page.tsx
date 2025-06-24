@@ -11,6 +11,12 @@ function getInitials(email?: string | null) {
   return name.slice(0, 2).toUpperCase();
 }
 
+// Helper to get file path from user metadata
+function getAvatarFilePath(user: any) {
+  // If you store just the file path in metadata, use it directly
+  return user?.user_metadata?.avatar_path || null;
+}
+
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
   const router = useRouter();
@@ -30,6 +36,25 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState<'cv' | 'cl' | null>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const clInputRef = useRef<HTMLInputElement>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  // Fetch signed URL for avatar on profile load
+  useEffect(() => {
+    async function fetchAvatar() {
+      if (user && getAvatarFilePath(user)) {
+        const filePath = getAvatarFilePath(user);
+        const { data, error } = await supabase.storage.from('documents').createSignedUrl(filePath, 60 * 60); // 1 hour
+        if (!error && data) {
+          setAvatar(data.signedUrl);
+        } else {
+          setAvatar(null);
+        }
+      } else {
+        setAvatar(null);
+      }
+    }
+    fetchAvatar();
+  }, [user]);
 
   useEffect(() => {
     if (user && user.user_metadata) {
@@ -39,7 +64,6 @@ export default function ProfilePage() {
       if (user.user_metadata.cl_url) {
         setCoverLetter({ name: user.user_metadata.cl_name || 'Cover Letter', url: user.user_metadata.cl_url });
       }
-      setAvatar(user.user_metadata.avatar_url || null);
     }
   }, [user]);
 
@@ -63,11 +87,40 @@ export default function ProfilePage() {
     if (!user) return;
     setLoading(true);
 
-    await updateUser({ avatar_url: avatar });
+    let avatar_path = getAvatarFilePath(user);
+
+    if (avatarFile) {
+      // Remove all previous avatar files for this user
+      const exts = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
+      const oldFiles = exts.map(ext => `${user.id}/avatar.${ext}`);
+      await supabase.storage.from('documents').remove(oldFiles);
+
+      const fileExt = avatarFile.name.split('.').pop();
+      const fileName = `avatar.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, avatarFile, { upsert: true });
+      if (uploadError) {
+        toast.error('Failed to upload new avatar.');
+        setLoading(false);
+        return;
+      }
+      avatar_path = filePath;
+      // Generate signed URL for instant preview
+      const { data, error } = await supabase.storage.from('documents').createSignedUrl(filePath, 60 * 60);
+      if (!error && data) {
+        setAvatar(data.signedUrl);
+      } else {
+        setAvatar(null);
+      }
+      await updateUser({ avatar_path }); // Store file path in user metadata
+    } else {
+      await updateUser({ avatar_path });
+    }
 
     setLoading(false);
     toast.success('Profile updated successfully!');
     setEdit(false);
+    setAvatarFile(null); // Reset after save
   }
 
   async function handleSignOut() {
@@ -77,35 +130,12 @@ export default function ProfilePage() {
   }
 
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file && user) {
-      setAvatarLoading(true);
-      // Preview
+    const file = e.target.files?.[0] ?? null;
+    setAvatarFile(file);
+    if (file) {
       const reader = new FileReader();
-      reader.onload = () => setAvatar(reader.result as string);
+      reader.onload = () => setAvatar(reader.result as string); // Preview while editing
       reader.readAsDataURL(file);
-      // Upload immediately
-      (async () => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `avatar.${fileExt}`;
-        const filePath = `${user.id}/${fileName}`;
-        const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, file, { upsert: true });
-        if (uploadError) {
-          console.error(uploadError);
-          toast.error('Failed to upload new avatar.');
-          setAvatarLoading(false);
-          return;
-        }
-        const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(filePath);
-        const { error: updateUserError } = await supabase.auth.updateUser({ data: { avatar_url: publicUrl } });
-        if (updateUserError) {
-          toast.error('Failed to update profile with new avatar.');
-        } else {
-          setAvatar(publicUrl);
-          toast.success('Avatar uploaded successfully!');
-        }
-        setAvatarLoading(false);
-      })();
     }
   }
 
