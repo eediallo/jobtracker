@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-provider';
 import { Toaster } from 'sonner';
 import { supabase } from '@/lib/supabase';
+import Image from 'next/image';
 
 const tabs = [
   { name: 'My Applications', href: '/dashboard/my-jobs', icon: (
@@ -87,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex flex-col items-center justify-center h-28 gap-2 select-none">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-fuchsia-400 to-emerald-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg overflow-hidden">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              <Image src={avatarUrl} alt="Avatar" width={56} height={56} className="w-full h-full object-cover" unoptimized />
             ) : (
               getInitials(user?.email)
             )}
@@ -137,7 +138,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex flex-col items-center justify-center h-28 gap-2 select-none">
             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-fuchsia-400 to-emerald-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg overflow-hidden">
               {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                <Image src={avatarUrl} alt="Avatar" width={56} height={56} className="w-full h-full object-cover" unoptimized />
               ) : (
                 getInitials(user?.email)
               )}

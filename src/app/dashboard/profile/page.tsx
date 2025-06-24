@@ -4,6 +4,9 @@ import { useAuth } from '@/lib/auth-provider';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+
+import type { User } from '@supabase/supabase-js';
 
 function getInitials(email?: string | null) {
   if (!email) return '?';
@@ -12,7 +15,7 @@ function getInitials(email?: string | null) {
 }
 
 // Helper to get file path from user metadata
-function getAvatarFilePath(user: any) {
+function getAvatarFilePath(user: User | null) {
   // If you store just the file path in metadata, use it directly
   return user?.user_metadata?.avatar_path || null;
 }
@@ -248,7 +251,7 @@ export default function ProfilePage() {
               {avatarLoading ? (
                 <span className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
               ) : avatar ? (
-                <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <Image src={avatar} alt="Avatar" width={40} height={40} className="w-full h-full object-cover" unoptimized />
               ) : (
                 <span>{getInitials(user.email)}</span>
               )}
