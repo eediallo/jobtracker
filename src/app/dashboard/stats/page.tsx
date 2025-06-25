@@ -133,7 +133,7 @@ export default function StatsPage() {
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
       XLSX.utils.book_append_sheet(workbook, jobsSheet, 'Jobs');
-      XLSX.writeFile(workbook, `JobTracker_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+      XLSX.writeFile(workbook, `JobsTracker_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
     } else { // CSV
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "Summary\n";
@@ -150,7 +150,7 @@ export default function StatsPage() {
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `JobTracker_Export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute("download", `JobsTracker_Export_${new Date().toISOString().split('T')[0]}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

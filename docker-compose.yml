@@ -1,8 +1,8 @@
 version: '3.8'
 services:
-  jobtracker:
+  JobsTracker:
     build: .
-    container_name: jobtracker-app
+    container_name: JobsTracker-app
     ports:
       - "3000:3000"
     environment:

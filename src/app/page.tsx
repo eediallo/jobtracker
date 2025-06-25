@@ -44,7 +44,7 @@ const benefits = [
 const testimonials = [
   {
     name: 'Alex J.',
-    text: 'JobTracker made my job search so much less stressful. I landed my dream job in 2 months!',
+    text: 'JobsTracker made my job search so much less stressful. I landed my dream job in 2 months!',
     avatar: '/vercel.svg',
   },
   {
@@ -78,7 +78,7 @@ export default function Page() {
             Simplify Your Job Search. Track Every Opportunity.
           </h1>
           <p className="text-lg md:text-xl text-gray-700 dark:text-gray-200 mb-8 animate-fade-in delay-100">
-            JobTracker helps you organize, analyze, and win your job hunt.
+            JobsTracker helps you organize, analyze, and win your job hunt.
           </p>
           <Link href="/auth/register" className="inline-block px-8 py-3 rounded-full bg-gradient-to-r from-blue-600 via-fuchsia-500 to-emerald-500 text-white font-bold text-lg shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200 animate-bounce">
             Get Started
@@ -104,7 +104,7 @@ export default function Page() {
       {/* Benefits Section */}
       <section className="max-w-4xl mx-auto px-4 py-12">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-600 via-fuchsia-500 to-emerald-500 dark:from-fuchsia-400 dark:via-blue-400 dark:to-emerald-400 bg-clip-text text-transparent">
-          Why JobTracker?
+          Why JobsTracker?
         </h2>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {benefits.map((b) => (

@@ -21,7 +21,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ## File Structure
 
 ```
-jobtracker/
+JobsTracker/
 ├── .env.local          # Your local environment variables (gitignored)
 ├── .env.example        # Template for environment variables
 ├── vercel.json         # Vercel deployment configuration

@@ -1,12 +1,12 @@
-# Jobtracker
+# JobsTracker
 
 ## Summary
 
-Jobtracker is a modern, full-stack web application that empowers users to efficiently track, manage, and analyze their job search process. With a focus on usability, analytics, and responsive design, Jobtracker streamlines the job application journey for individuals seeking new opportunities.
+JobsTracker is a modern, full-stack web application that empowers users to efficiently track, manage, and analyze their job search process. With a focus on usability, analytics, and responsive design, JobsTracker streamlines the job application journey for individuals seeking new opportunities.
 
 ## Overview
 
-Jobtracker provides a seamless experience for job seekers to:
+JobsTracker provides a seamless experience for job seekers to:
 - Register and securely log in to their own dashboard.
 - Add, edit, and delete job applications with key details (position, company, city, date, status, and a job description link).
 - Visualize their job search progress with animated statistics and charts.
@@ -17,7 +17,7 @@ The application is built using Next.js (App Router), TypeScript, Tailwind CSS, a
 
 ## Demo
 
-Below are example screenshots of the Jobtracker application in action:
+Below are example screenshots of the JobsTracker application in action:
 
 ### Landing page
 
