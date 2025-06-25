@@ -183,7 +183,7 @@ export default function StatsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Analytics</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center md:text-left w-full block">Analytics</h1>
       {/* Filter Controls */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <div className="flex gap-2">

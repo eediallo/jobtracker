@@ -71,17 +71,17 @@ export default function MyJobsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">My Applications</h1>
-      <div className="flex flex-col md:flex-row gap-2 mb-4">
+      <h1 className="text-2xl font-bold mb-4 text-center md:text-left w-full block">My Applications</h1>
+      <div className="flex flex-col md:flex-row gap-2 mb-4 mt-8 md:mt-0 justify-center items-center">
         <input
           type="text"
           placeholder="Search by position, company, or city"
-          className="input input-bordered w-full md:w-1/3"
+          className="input input-bordered w-full max-w-xs md:w-1/3"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
         <select
-          className="input input-bordered w-full md:w-40"
+          className="input input-bordered w-full max-w-xs md:w-40"
           value={status}
           onChange={e => setStatus(e.target.value)}
         >

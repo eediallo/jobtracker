@@ -236,7 +236,7 @@ export default function ProfilePage() {
 
   return (
     <main className="max-w-3xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-8 tracking-tight">Profile</h1>
+      <h1 className="text-3xl font-bold mb-8 tracking-tight text-center md:text-left w-full block">Profile</h1>
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 flex flex-col md:flex-row gap-10">
         {/* Left: Avatar & Info */}
         <div className="flex flex-col items-center md:w-1/3 gap-5">

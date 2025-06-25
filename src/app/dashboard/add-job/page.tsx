@@ -58,7 +58,7 @@ export default function AddJobPage() {
 
   return (
     <main className="max-w-lg mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Add Job</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center md:text-left w-full block">Add Job</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl">
         {/* Position */}
         <div className="relative mb-2">
