@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Open Source, Legal, and Footer Link Policy
+
+This project is open source under the MIT License. See [README.md](mdc:README.md) for project overview and usage, [LICENSE](mdc:LICENSE) for license terms, and [CONTRIBUTING.md](mdc:CONTRIBUTING.md) for contribution guidelines.
+
+- **Legal Pages:** Privacy Policy and Terms of Service pages are intentionally omitted from the codebase. Do not add or link to these pages in the UI unless the project is deployed as a public service that collects user data.
+- **Footer Links:** The footer should not include links to Privacy Policy or Terms of Service. Only include relevant navigation, contact, and social links.
+- **Open Source Use:** Anyone may clone, self-host, and contribute to the project under the MIT License.
