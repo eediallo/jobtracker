@@ -22,7 +22,7 @@ Below are example screenshots of the JobsTracker application in action:
 ### Landing page
 
 <img width="1649" alt="image" src="https://github.com/user-attachments/assets/a025f183-0807-4843-a5b1-4aec21fd1e4f" />
-<img width="1620" alt="image" src="https://github.com/user-attachments/assets/2a6cd543-9ca9-498c-9a36-d0cb033325e2" />
+<img width="1620" alt="image" src="https://github.com/user-attachments/assets/e324e23a-a2a7-4734-8818-ca61fcbea083" />
 
 ### My Applications
 <img width="1673" alt="image" src="https://github.com/user-attachments/assets/f32e5a39-0dfc-400d-b21d-a7599b74e085" />
