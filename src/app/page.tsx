@@ -45,12 +45,12 @@ const testimonials = [
   {
     name: 'Alex J.',
     text: 'JobsTracker made my job search so much less stressful. I landed my dream job in 2 months!',
-    avatar: '/vercel.svg',
+    avatar: '/alex.jpg',
   },
   {
     name: 'Samira K.',
     text: 'The analytics and reminders kept me on track. Highly recommend for any job seeker!',
-    avatar: '/globe.svg',
+    avatar: '/samira.jpg',
   },
 ];
 
