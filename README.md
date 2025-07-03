@@ -34,7 +34,7 @@ Below are example screenshots of the JobsTracker application in action:
 
 ### Stats & Analytics
 
-<img width="1672" alt="image" src="https://github.com/user-attachments/assets/dbbb0fbc-b34a-45a3-bb88-1f43026d9cf9" />
+<img width="1672" alt="image" src="https://github.com/user-attachments/assets/783d959e-22d0-4a95-9a4f-0c15beee0c39" />
 
 ### Profile Management
 
