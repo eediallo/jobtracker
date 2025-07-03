@@ -62,20 +62,37 @@ Below are example screenshots of the JobsTracker application in action:
 - [Supabase](https://supabase.io/) (Auth & Database)
 - [Vercel](https://vercel.com/) (Deployment)
 
-## VibeOps Coding Tools Used
+## Open Source & Self-Hosting
 
-This project was developed with the help of VibeOps, an AI-powered coding and deployment assistant. VibeOps tools used include:
+JobsTracker is now open source! Anyone can clone, self-host, and use the application to organize their job search. Contributions are welcome under the [MIT License](LICENSE).
 
-- **Deployment Monitoring:** Checked Vercel deployment status and logs to debug build errors.
-- **Environment Management:** Managed environment variables and Supabase credentials securely.
-- **Code Push Automation:** Assisted with pushing code to both GitHub and GitLab, ensuring CI/CD integration.
-- **Prompt-driven Development:** Used natural language prompts to refactor UI, implement features, and debug issues.
+### Getting Started
 
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/eediallo/jobtracker.git
+   cd jobtracker
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Set up environment variables:**
+   - Copy `.env.example` to `.env.local` and fill in your Supabase credentials and other required variables (see [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)).
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
 
-## AI Assistants
+For deployment instructions, see [Vercel documentation](https://vercel.com/docs) or your preferred hosting provider.
 
-This project was built with the collaborative help of several AI assistants and tools:
+## Contributing
 
-- **VibeOps (AI Coding Assistant):** Main pair-programmer for code, refactoring, debugging, and deployment automation.
-- **Claude (Anthropic):** Assisted in drafting and refining natural language prompts and requirements.
-- **Cursor (IDE):** All development and AI-assisted coding was performed in the [Cursor](https://www.cursor.so/) IDE, which integrates AI tools for seamless coding and collaboration.
+We welcome contributions from the community! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started, submit issues, and make pull requests.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
