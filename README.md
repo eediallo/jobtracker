@@ -25,7 +25,7 @@ Below are example screenshots of the JobsTracker application in action:
 <img width="1620" alt="image" src="https://github.com/user-attachments/assets/e324e23a-a2a7-4734-8818-ca61fcbea083" />
 
 ### My Applications
-<img width="1673" alt="image" src="https://github.com/user-attachments/assets/f32e5a39-0dfc-400d-b21d-a7599b74e085" />
+<img width="1673" alt="image" src="https://github.com/user-attachments/assets/3591f80a-cfa2-4238-be94-5df6d1dcbf23" />
 
 ### Add Job Form
 
