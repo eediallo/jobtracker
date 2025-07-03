@@ -29,7 +29,7 @@ Below are example screenshots of the JobsTracker application in action:
 
 ### Add Job Form
 
-<img width="1669" alt="image" src="https://github.com/user-attachments/assets/dae3187a-cdf5-42d6-a8ff-9dab8c4e51a7" />
+<img width="1669" alt="image" src="https://github.com/user-attachments/assets/ba36730c-db51-4404-8a63-4dbe5197f5c6" />
 *Add Job: Quickly add new job applications with a modern, validated form.*
 
 ### Stats & Analytics
