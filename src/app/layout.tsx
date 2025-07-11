@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-provider";
+import NextAuthProvider from "@/components/NextAuthProvider"; // Adjust path if needed
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Eda Jobs",
-  description: "Eda Jobs allows you to efficiently track, manage, and analyze your job search process.",
+  description:
+    "Eda Jobs allows you to efficiently track, manage, and analyze your job search process.",
 };
 
 export default function RootLayout({
@@ -28,9 +30,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {/* The next-auth provider wraps everything else */}
+        <NextAuthProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );
