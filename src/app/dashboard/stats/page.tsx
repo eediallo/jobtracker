@@ -129,11 +129,37 @@ export default function StatsPage() {
   // Check if user is authenticated with either system
   const isAuthenticated = user || nextAuthSession;
 
+  // Function to get user ID for database operations
+  async function getUserId() {
+    if (user) {
+      return user.id; // Supabase user ID
+    } else if (nextAuthSession?.user?.email) {
+      // For NextAuth users, generate a deterministic UUID from their email
+      const crypto = await import("crypto");
+      const hash = crypto
+        .createHash("sha256")
+        .update(`google_${nextAuthSession.user.email}`)
+        .digest("hex");
+
+      // Convert hash to UUID format (8-4-4-4-12)
+      const uuid = [
+        hash.slice(0, 8),
+        hash.slice(8, 12),
+        hash.slice(12, 16),
+        hash.slice(16, 20),
+        hash.slice(20, 32),
+      ].join("-");
+
+      return uuid;
+    }
+    return null;
+  }
+
   // Always call hooks before any return
   // Compute filtered jobs and metrics with fallback for loading/user
   const now = new Date();
   let filteredJobs: Job[] = [];
-  if (user && jobs.length > 0) {
+  if (isAuthenticated && jobs.length > 0) {
     filteredJobs = jobs;
     if (dateRange !== "all") {
       const days = dateRange === "30d" ? 30 : 90;
@@ -157,12 +183,12 @@ export default function StatsPage() {
     .slice(0, 5);
 
   // For number animation (always call hooks)
-  const totalAnim = useCountUp(user ? total : 0);
-  const appliedAnim = useCountUp(user ? byStatus["applied"] : 0);
-  const interviewAnim = useCountUp(user ? byStatus["interview"] : 0);
-  const offerAnim = useCountUp(user ? byStatus["offer"] : 0);
-  const rejectedAnim = useCountUp(user ? byStatus["rejected"] : 0);
-  const acceptedAnim = useCountUp(user ? byStatus["accepted"] : 0);
+  const totalAnim = useCountUp(isAuthenticated ? total : 0);
+  const appliedAnim = useCountUp(isAuthenticated ? byStatus["applied"] : 0);
+  const interviewAnim = useCountUp(isAuthenticated ? byStatus["interview"] : 0);
+  const offerAnim = useCountUp(isAuthenticated ? byStatus["offer"] : 0);
+  const rejectedAnim = useCountUp(isAuthenticated ? byStatus["rejected"] : 0);
+  const acceptedAnim = useCountUp(isAuthenticated ? byStatus["accepted"] : 0);
 
   // Color classes for bar chart
   const barColors = statusLabels.map((s) =>
@@ -171,21 +197,43 @@ export default function StatsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    if (!user) {
-      // NextAuth user - no jobs in Supabase yet
-      setJobs([]);
+
+    async function loadJobs() {
+      setLoading(true);
+
+      try {
+        if (user) {
+          // Direct Supabase user
+          const { data } = await supabase
+            .from("jobs")
+            .select("*")
+            .eq("user_id", user.id);
+          setJobs(data || []);
+        } else if (nextAuthSession?.user?.email) {
+          // NextAuth user - get their jobs using deterministic UUID
+          const userId = await getUserId();
+          if (userId) {
+            const { data } = await supabase
+              .from("jobs")
+              .select("*")
+              .eq("user_id", userId);
+            setJobs(data || []);
+          } else {
+            setJobs([]);
+          }
+        } else {
+          setJobs([]);
+        }
+      } catch (error) {
+        console.error("Error loading jobs:", error);
+        setJobs([]);
+      }
+
       setLoading(false);
-      return;
     }
-    supabase
-      .from("jobs")
-      .select("*")
-      .eq("user_id", user.id)
-      .then(({ data }) => {
-        setJobs(data || []);
-        setLoading(false);
-      });
-  }, [user, isAuthenticated]);
+
+    loadJobs();
+  }, [user, nextAuthSession, isAuthenticated]);
 
   function handleExport(format: "csv" | "xlsx") {
     setExporting(true);
