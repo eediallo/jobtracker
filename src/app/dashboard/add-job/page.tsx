@@ -58,16 +58,19 @@ export default function AddJobPage() {
 
       // Create user record in Supabase if it doesn't exist
       try {
-        const { error } = await supabase.from("users").upsert({
-          id: uuid,
-          email: nextAuthSession.user.email,
-          name: nextAuthSession.user.name,
-          created_at: new Date().toISOString(),
-        }, {
-          onConflict: 'id'
-        });
+        const { error } = await supabase.from("users").upsert(
+          {
+            id: uuid,
+            email: nextAuthSession.user.email,
+            name: nextAuthSession.user.name,
+            created_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "id",
+          }
+        );
 
-        if (error && !error.message.includes('duplicate key')) {
+        if (error && !error.message.includes("duplicate key")) {
           console.error("Error creating user record:", error);
         }
       } catch (error) {
