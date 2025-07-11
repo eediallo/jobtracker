@@ -70,7 +70,11 @@ export default function AddJobPage() {
           }
         );
 
-        if (error && !error.message.includes("duplicate key")) {
+        if (
+          error &&
+          error.message &&
+          !error.message.includes("duplicate key")
+        ) {
           console.error("Error creating user record:", error);
         }
       } catch (error) {
