@@ -9,22 +9,28 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  debug: process.env.NODE_ENV === "development",
   callbacks: {
     async redirect({ url, baseUrl }) {
       console.log("Redirect callback:", { url, baseUrl }); // Debug logging
 
-      // If the url is a relative path, use it with baseUrl
-      if (url.startsWith("/")) {
-        return `${baseUrl}${url}`;
-      }
+      try {
+        // If the url is a relative path, use it with baseUrl
+        if (url.startsWith("/")) {
+          return `${baseUrl}${url}`;
+        }
 
-      // If the url is from the same origin, use it
-      if (url.startsWith(baseUrl)) {
-        return url;
-      }
+        // If the url is from the same origin, use it
+        if (url.startsWith(baseUrl)) {
+          return url;
+        }
 
-      // Default fallback to dashboard
-      return `${baseUrl}/dashboard/my-jobs`;
+        // Default fallback to dashboard
+        return `${baseUrl}/dashboard`;
+      } catch (error) {
+        console.error("Redirect error:", error);
+        return `${baseUrl}/dashboard`;
+      }
     },
     async signIn({ user, account }) {
       console.log("SignIn callback:", {
