@@ -18,6 +18,8 @@ export default function MyJobsPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Check if user is authenticated with either system
   const isAuthenticated = user || nextAuthSession;
@@ -79,42 +81,39 @@ export default function MyJobsPage() {
 
     async function loadJobs() {
       setLoading(true);
-
+      const pageSize = 10;
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
       try {
+        let userId = null;
         if (user) {
-          // Direct Supabase user
-          const { data } = await supabase
-            .from("jobs")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("application_date", { ascending: false });
-          setJobs(data || []);
+          userId = user.id;
         } else if (nextAuthSession?.user?.email) {
-          // NextAuth user - find their Supabase user ID
-          const userId = await getUserId();
-          if (userId) {
-            const { data } = await supabase
-              .from("jobs")
-              .select("*")
-              .eq("user_id", userId)
-              .order("application_date", { ascending: false });
-            setJobs(data || []);
-          } else {
-            setJobs([]);
-          }
+          userId = await getUserId();
+        }
+        if (userId) {
+          // Get jobs for this user, paginated
+          const { data, count, error } = await supabase
+            .from("jobs")
+            .select("*", { count: "exact" })
+            .eq("user_id", userId)
+            .order("application_date", { ascending: false })
+            .range(from, to);
+          setJobs(data || []);
+          setTotalPages(count ? Math.ceil(count / pageSize) : 1);
         } else {
           setJobs([]);
+          setTotalPages(1);
         }
       } catch (error) {
         console.error("Error loading jobs:", error);
         setJobs([]);
+        setTotalPages(1);
       }
-
       setLoading(false);
     }
-
     loadJobs();
-  }, [user, nextAuthSession, isAuthenticated]);
+  }, [user, nextAuthSession, isAuthenticated, page]);
 
   function handleDelete(id: number) {
     setConfirmDelete(id);
@@ -201,6 +200,26 @@ export default function MyJobsPage() {
             Clear
           </button>
         )}
+      </div>
+      {/* Pagination controls */}
+      <div className="flex justify-center items-center gap-2 mb-4">
+        <button
+          className="btn btn-outline"
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <span className="px-2 text-sm font-semibold">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          className="btn btn-outline"
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+        >
+          Next
+        </button>
       </div>
       {/* Table view for desktop */}
       <div className="hidden md:block">
