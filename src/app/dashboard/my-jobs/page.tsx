@@ -227,17 +227,17 @@ export default function MyJobsPage() {
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-6">
             <button
-              className="btn btn-outline"
+              className={`px-5 py-2 rounded-lg font-semibold transition-colors duration-150 border-2 border-blue-500 text-blue-600 bg-white hover:bg-blue-50 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-300`}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Previous
             </button>
-            <span className="px-2 text-sm font-semibold">
+            <span className="px-2 text-sm font-semibold text-blue-700">
               Page {page} of {totalPages}
             </span>
             <button
-              className="btn btn-outline"
+              className={`px-5 py-2 rounded-lg font-semibold transition-colors duration-150 border-2 border-blue-500 text-blue-600 bg-white hover:bg-blue-50 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-300`}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
@@ -272,17 +272,17 @@ export default function MyJobsPage() {
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-6">
             <button
-              className="btn btn-outline"
+              className={`px-5 py-2 rounded-lg font-semibold transition-colors duration-150 border-2 border-blue-500 text-blue-600 bg-white hover:bg-blue-50 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-300`}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Previous
             </button>
-            <span className="px-2 text-sm font-semibold">
+            <span className="px-2 text-sm font-semibold text-blue-700">
               Page {page} of {totalPages}
             </span>
             <button
-              className="btn btn-outline"
+              className={`px-5 py-2 rounded-lg font-semibold transition-colors duration-150 border-2 border-blue-500 text-blue-600 bg-white hover:bg-blue-50 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-300`}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
