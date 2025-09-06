@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-provider";
 import { useSession } from "next-auth/react";
@@ -129,19 +129,15 @@ export default function StatsPage() {
   // Check if user is authenticated with either system
   const isAuthenticated = user || nextAuthSession;
 
-  // Function to get user ID for database operations
-  async function getUserId() {
+  const getUserId = useCallback(async (): Promise<string | null> => {
     if (user) {
-      return user.id; // Supabase user ID
+      return user.id;
     } else if (nextAuthSession?.user?.email) {
-      // For NextAuth users, generate a deterministic UUID from their email
       const crypto = await import("crypto");
       const hash = crypto
         .createHash("sha256")
         .update(`google_${nextAuthSession.user.email}`)
         .digest("hex");
-
-      // Convert hash to UUID format (8-4-4-4-12)
       const uuid = [
         hash.slice(0, 8),
         hash.slice(8, 12),
@@ -149,11 +145,10 @@ export default function StatsPage() {
         hash.slice(16, 20),
         hash.slice(20, 32),
       ].join("-");
-
       return uuid;
     }
     return null;
-  }
+  }, [user, nextAuthSession]);
 
   // Always call hooks before any return
   // Compute filtered jobs and metrics with fallback for loading/user
@@ -233,7 +228,7 @@ export default function StatsPage() {
     }
 
     loadJobs();
-  }, [user, nextAuthSession, isAuthenticated]);
+  }, [user, nextAuthSession, isAuthenticated, getUserId]);
 
   function handleExport(format: "csv" | "xlsx") {
     setExporting(true);
@@ -246,7 +241,6 @@ export default function StatsPage() {
     ];
 
     const jobsData = filteredJobs.map((job) => ({
-      Position: job.position,
       Company: job.company,
       City: job.city,
       "Application Date": job.application_date,

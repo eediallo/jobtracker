@@ -93,7 +93,7 @@ export default function MyJobsPage() {
         }
         if (userId) {
           // Get jobs for this user, paginated
-          const { data, count, error } = await supabase
+          const { data, count } = await supabase
             .from("jobs")
             .select("*", { count: "exact" })
             .eq("user_id", userId)

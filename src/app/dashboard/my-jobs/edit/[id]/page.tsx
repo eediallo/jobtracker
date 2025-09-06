@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-provider";
@@ -27,19 +27,15 @@ export default function EditJobPage() {
   // Check if user is authenticated with either system
   const isAuthenticated = user || nextAuthSession;
 
-  // Function to get user ID for database operations
-  async function getUserId() {
+  const getUserId = useCallback(async (): Promise<string | null> => {
     if (user) {
-      return user.id; // Supabase user ID
+      return user.id;
     } else if (nextAuthSession?.user?.email) {
-      // For NextAuth users, generate a deterministic UUID from their email
       const crypto = await import("crypto");
       const hash = crypto
         .createHash("sha256")
         .update(`google_${nextAuthSession.user.email}`)
         .digest("hex");
-
-      // Convert hash to UUID format (8-4-4-4-12)
       const uuid = [
         hash.slice(0, 8),
         hash.slice(8, 12),
@@ -47,11 +43,10 @@ export default function EditJobPage() {
         hash.slice(16, 20),
         hash.slice(20, 32),
       ].join("-");
-
       return uuid;
     }
     return null;
-  }
+  }, [user, nextAuthSession]);
 
   useEffect(() => {
     if (!isAuthenticated || !id) return;
@@ -91,7 +86,7 @@ export default function EditJobPage() {
     }
 
     loadJob();
-  }, [user, nextAuthSession, isAuthenticated, id]);
+  }, [user, nextAuthSession, isAuthenticated, id, getUserId]);
 
   function handleChange(
     e: React.ChangeEvent<
