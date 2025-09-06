@@ -201,26 +201,7 @@ export default function MyJobsPage() {
           </button>
         )}
       </div>
-      {/* Pagination controls */}
-      <div className="flex justify-center items-center gap-2 mb-4">
-        <button
-          className="btn btn-outline"
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          disabled={page === 1}
-        >
-          Previous
-        </button>
-        <span className="px-2 text-sm font-semibold">
-          Page {page} of {totalPages}
-        </span>
-        <button
-          className="btn btn-outline"
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          disabled={page === totalPages}
-        >
-          Next
-        </button>
-      </div>
+      {/* Table view for desktop */}
       {/* Table view for desktop */}
       <div className="hidden md:block">
         {loading ? (
@@ -241,6 +222,28 @@ export default function MyJobsPage() {
             ctaLabel="Add your first job"
             onCta={() => (window.location.href = "/dashboard/add-job")}
           />
+        )}
+        {/* Pagination controls at bottom, only if more than 10 jobs */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              className="btn btn-outline"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="px-2 text-sm font-semibold">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="btn btn-outline"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
       {/* Card view for mobile */}
@@ -264,6 +267,28 @@ export default function MyJobsPage() {
             ctaLabel="Add your first job"
             onCta={() => (window.location.href = "/dashboard/add-job")}
           />
+        )}
+        {/* Pagination controls at bottom, only if more than 10 jobs */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              className="btn btn-outline"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="px-2 text-sm font-semibold">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="btn btn-outline"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
       {/* Confirmation dialog for delete */}
